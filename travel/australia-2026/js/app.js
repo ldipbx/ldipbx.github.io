@@ -23,10 +23,6 @@ function findTodayDay() {
   return DAYS.find((d) => d.date === t) || null;
 }
 
-function citySlugClass(slug) {
-  return slug ? `city-${slug}` : '';
-}
-
 function badge(status) {
   const label = STATUS_LABEL[status] || status;
   return `<span class="badge ${status}">${label}</span>`;
@@ -84,19 +80,51 @@ function renderIndexPage() {
   document.getElementById('open-issues-title').style.display = OPEN_ISSUES.length ? '' : 'none';
   renderOpenIssuesList(issuesEl, OPEN_ISSUES);
 
+  // 依 citySlug 把連續的天數分組成一段一段的行程（沒有 slug 的出發/返程日各自獨立成一組）
+  const legs = [];
+  DAYS.forEach((d) => {
+    const key = d.citySlug || `solo-${d.day}`;
+    const last = legs[legs.length - 1];
+    if (last && last.key === key) {
+      last.days.push(d);
+    } else {
+      const label = d.citySlug ? CITY_GUIDES[d.citySlug].name : d.city;
+      legs.push({ key, slug: d.citySlug, label, days: [d] });
+    }
+  });
+
   const listEl = document.getElementById('day-list');
-  listEl.innerHTML = DAYS.map((d) => {
-    const isToday = today && today.day === d.day;
-    const hasIssue = OPEN_ISSUES.some((i) => i.day === d.day);
+  listEl.innerHTML = legs.map((leg) => {
+    const nightsDay = leg.days.find((d) => d.accommodation);
+    const meta = nightsDay ? `${nightsDay.accommodation.nights}晚` : '';
+    const dotClass = leg.slug ? `dot-${leg.slug}` : 'dot-neutral';
+    const badgeClass = leg.slug ? `badge-${leg.slug}` : 'badge-neutral';
+
+    const cards = leg.days.map((d) => {
+      const isToday = today && today.day === d.day;
+      const hasIssue = OPEN_ISSUES.some((i) => i.day === d.day);
+      return `
+        <a class="day-card ${isToday ? 'today' : ''}" href="day.html?d=${d.day}">
+          <div class="day-badge ${badgeClass}"><span>Day</span><span class="num">${d.day}</span></div>
+          <div class="day-body">
+            <div class="day-date">${d.date}（${d.weekday}）</div>
+            <div class="day-city">${d.city}</div>
+            ${hasIssue ? '<div class="day-issue">⚠ 這天有資料待確認</div>' : ''}
+          </div>
+          <div class="chevron">›</div>
+        </a>
+      `;
+    }).join('');
+
     return `
-      <a class="day-card ${citySlugClass(d.citySlug)} ${isToday ? 'today' : ''}" href="day.html?d=${d.day}">
-        <div class="day-top">
-          <span class="day-label">Day${d.day}</span>
-          <span class="day-date">${d.date}（${d.weekday}）</span>
+      <div class="leg-group">
+        <div class="leg-header">
+          <span class="leg-dot ${dotClass}"></span>
+          <span class="leg-name">${leg.label}</span>
+          ${meta ? `<span class="leg-meta">・${meta}</span>` : ''}
         </div>
-        <div class="day-city">${d.city}</div>
-        ${hasIssue ? '<div class="day-issue">⚠ 這天有資料待確認</div>' : ''}
-      </a>
+        ${cards}
+      </div>
     `;
   }).join('');
 }
@@ -111,13 +139,16 @@ function renderDayPage() {
 
   const prev = DAYS.find((d) => d.day === day.day - 1);
   const next = DAYS.find((d) => d.day === day.day + 1);
+
   document.getElementById('day-nav-top').innerHTML = `
-    ${prev ? `<a href="day.html?d=${prev.day}">← Day${prev.day}</a>` : '<span class="disabled">← 已是第一天</span>'}
-    <span>Day${day.day}｜${day.date}（${day.weekday}）</span>
-    ${next ? `<a href="day.html?d=${next.day}">Day${next.day} →</a>` : '<span class="disabled">已是最後一天 →</span>'}
+    <div class="ctx-day">Day${day.day}・${day.city}</div>
+    <div class="ctx-date">${day.date}（${day.weekday}）</div>
   `;
 
-  document.getElementById('day-city-title').textContent = day.city;
+  document.getElementById('day-nav-bottom').innerHTML = `
+    ${prev ? `<a href="day.html?d=${prev.day}">← Day${prev.day}</a>` : '<span class="disabled">← 第一天</span>'}
+    ${next ? `<a href="day.html?d=${next.day}">Day${next.day} →</a>` : '<span class="disabled">最後一天 →</span>'}
+  `;
 
   const accEl = document.getElementById('accommodation');
   if (day.accommodation) {
@@ -145,19 +176,22 @@ function renderDayPage() {
   const timelineEl = document.getElementById('timeline');
   timelineEl.innerHTML = day.segments.map((s) => `
     <div class="segment">
-      <div class="seg-top">
+      <div class="seg-rail">
         <span class="seg-time">${s.time}</span>
-        <span class="seg-title">${s.title}${s.flightNo ? `（${s.flightNo}）` : ''}</span>
-        ${badge(s.status)}
+        <span class="seg-dot dot-${s.status}"></span>
       </div>
-      ${s.duration ? `<div class="seg-duration">預估時間：${s.duration}</div>` : ''}
-      ${s.howTo ? `<div class="seg-detail">🚌 ${s.howTo}</div>` : ''}
-      ${s.warning ? `<div class="seg-warning">⚠ ${s.warning}</div>` : ''}
-      ${s.alternatives && s.alternatives.length ? `<div class="seg-alt">備案：<ul>${s.alternatives.map((a) => `<li>${a}</li>`).join('')}</ul></div>` : ''}
+      <div class="seg-content">
+        <div class="seg-top">
+          <span class="seg-title">${s.title}${s.flightNo ? `（${s.flightNo}）` : ''}</span>
+          ${badge(s.status)}
+        </div>
+        ${s.duration ? `<div class="seg-duration">預估時間：${s.duration}</div>` : ''}
+        ${s.howTo ? `<div class="seg-detail">🚌 ${s.howTo}</div>` : ''}
+        ${s.warning ? `<div class="seg-warning">⚠ ${s.warning}</div>` : ''}
+        ${s.alternatives && s.alternatives.length ? `<div class="seg-alt">備案：<ul>${s.alternatives.map((a) => `<li>${a}</li>`).join('')}</ul></div>` : ''}
+      </div>
     </div>
   `).join('');
-
-  document.getElementById('day-nav-bottom').innerHTML = document.getElementById('day-nav-top').innerHTML;
 }
 
 // ---- city.html ----
@@ -170,8 +204,7 @@ function renderCityPage() {
     return;
   }
   document.title = `${guide.name}｜城市指南｜澳洲旅遊手冊`;
-  document.getElementById('city-title').textContent = guide.name;
-  document.getElementById('city-title').className = citySlugClass(slug) ? `tile-${slug}` : '';
+  document.getElementById('city-title').innerHTML = `<span class="dot dot-${slug}"></span>${guide.name}`;
 
   const parts = [];
 

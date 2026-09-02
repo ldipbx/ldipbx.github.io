@@ -1,8 +1,9 @@
 // 澳洲旅遊手冊 - 行程資料
-// 資料整理自 00 raw data/澳洲.xlsx，保留原始內容；未提供的資訊一律用 status:'tbd' 標記，不自行編造。
+// 資料整理自 00 raw data/澳洲.xlsx，並依實際機票日期(9/24晚上出發、10/4晚上回程)校正過。
+// 未提供的資訊一律用 status:'tbd' 標記，不自行編造。
 
 const TRIP = {
-  start: '2026-09-23',
+  start: '2026-09-24',
   end: '2026-10-05',
   travelers: 6,
 };
@@ -10,7 +11,7 @@ const TRIP = {
 // status: 'confirmed' 已確定 | 'tbd' 待確認/尚未安排 | 'candidate' 候選方案(尚未定案) | 'action' 待辦事項
 const DAYS = [
   {
-    day: 1, date: '2026-09-23', weekday: '星期三',
+    day: 1, date: '2026-09-24', weekday: '星期四',
     city: '出發', citySlug: null,
     accommodation: null,
     segments: [
@@ -23,12 +24,13 @@ const DAYS = [
     notes: ['ETA 電子簽證請務必提前申請，詳見「行前準備清單」，不要拖到出發前才辦'],
   },
   {
-    day: 2, date: '2026-09-24', weekday: '星期四',
-    city: '布里斯本', citySlug: 'brisbane',
+    day: 2, date: '2026-09-25', weekday: '星期五',
+    city: '布里斯本 → 黃金海岸', citySlug: 'goldcoast',
     accommodation: {
-      name: '尚未預訂', nights: 1, checkin: '2026-09-24', checkout: '2026-09-25',
-      bookingUrl: null, rooms: null, status: 'tbd',
-      note: '目前 Excel 上只有天數，沒有訂房資訊，需盡快確認，避免影響隔天行程銜接',
+      name: 'Golden Sands on the Beach - Absolute Beachfront Apartments',
+      nights: 3, checkin: '2026-09-25', checkout: '2026-09-28',
+      bookingUrl: 'https://www.booking.com/hotel/au/golden-sands.zh-tw.html',
+      rooms: '3房（6人）', status: 'confirmed',
     },
     segments: [
       { time: '10:45', type: 'flight', title: '抵達雪梨機場 T1（國際航廈）', flightNo: 'CI051', status: 'confirmed' },
@@ -47,35 +49,24 @@ const DAYS = [
         howTo: '機場三樓搭乘 Airtrain 機場快線，最快速方便，直達中央車站',
         alternatives: ['Con-x-ion 機場接駁巴士（約30~45分，可直達飯店，適合住非市中心）', 'Uber / 計程車（適合多人共乘，市中心停車費較高）'],
       },
-    ],
-    notes: ['布里斯本住宿尚未訂，需盡快確認'],
-  },
-  {
-    day: 3, date: '2026-09-25', weekday: '星期五',
-    city: '布里斯本 → 黃金海岸', citySlug: 'goldcoast',
-    accommodation: {
-      name: 'Golden Sands on the Beach - Absolute Beachfront Apartments',
-      nights: 3, checkin: '2026-09-25', checkout: '2026-09-28',
-      bookingUrl: 'https://www.booking.com/hotel/au/golden-sands.zh-tw.html',
-      rooms: '3房（6人）', status: 'confirmed',
-    },
-    segments: [
       {
-        time: '白天', type: 'activity', title: '布里斯本市區自由活動、集合', status: 'confirmed',
-        howTo: '可參考「布里斯本」城市指南：市政廳、皇后街購物中心、南岸公園等',
-        alternatives: [],
+        time: '傍晚前', type: 'activity', title: '布里斯本市區快閃觀光（時間有限，約2~3小時）', status: 'candidate',
+        howTo: '可參考「布里斯本」城市指南，建議挑1~2個離中央車站近的點（例如皇后街購物中心、市政廳），不用勉強逛滿',
+        alternatives: ['搭了一整夜飛機比較累的話，可直接跳過市區、提早出發黃金海岸休息'],
       },
-      { time: '白天', type: 'transport', title: '購買 Go Card', status: 'confirmed', howTo: '若 Day2 已購買可略過，此為備註提醒' },
       {
         time: '21:00', type: 'transport', title: '移動到黃金海岸並辦理入住', duration: '車程約1小時多',
         status: 'confirmed', howTo: '建議確認接送方式（租車/Uber/接駁），6人+行李需確認車輛座位數',
         alternatives: [],
       },
     ],
-    notes: [],
+    notes: [
+      '因為實際航班是9/24晚上出發、9/25白天抵達，布里斯本改成不過夜，抵達當天傍晚就直接前往黃金海岸',
+      '這天等於是「一整夜飛機＋轉機＋長途移動」疊在一起，對6人來說會是體力最吃緊的一天，行程排鬆一點比較好',
+    ],
   },
   {
-    day: 4, date: '2026-09-26', weekday: '星期六',
+    day: 3, date: '2026-09-26', weekday: '星期六',
     city: '黃金海岸', citySlug: 'goldcoast',
     accommodation: null,
     segments: [
@@ -92,10 +83,10 @@ const DAYS = [
         howTo: '好吃的義式餐廳，記得先預約', alternatives: ['Costa D’oro Italian Restaurant（鮮蝦飯好吃）'],
       },
     ],
-    notes: ['濱海市場只在週三、五、日下午～晚上8點營業，本日是週六不開放，若想逛可挪到 Day3(五)'],
+    notes: ['濱海市場只在週三、五、日下午～晚上8點營業，本日是週六不開放'],
   },
   {
-    day: 5, date: '2026-09-27', weekday: '星期日',
+    day: 4, date: '2026-09-27', weekday: '星期日',
     city: '黃金海岸', citySlug: 'goldcoast',
     accommodation: null,
     segments: [
@@ -105,7 +96,7 @@ const DAYS = [
     notes: [],
   },
   {
-    day: 6, date: '2026-09-28', weekday: '星期一',
+    day: 5, date: '2026-09-28', weekday: '星期一',
     city: '黃金海岸 → 雪梨', citySlug: 'sydney',
     accommodation: {
       name: 'Meriton Suites Bondi Junction', nights: 3,
@@ -128,7 +119,7 @@ const DAYS = [
     notes: [],
   },
   {
-    day: 7, date: '2026-09-29', weekday: '星期二',
+    day: 6, date: '2026-09-29', weekday: '星期二',
     city: '雪梨', citySlug: 'sydney',
     accommodation: null,
     segments: [
@@ -142,20 +133,20 @@ const DAYS = [
     notes: [],
   },
   {
-    day: 8, date: '2026-09-30', weekday: '星期三',
+    day: 7, date: '2026-09-30', weekday: '星期三',
     city: '雪梨', citySlug: 'sydney',
     accommodation: null,
     segments: [
       {
         time: '全天', type: 'activity', title: '賞鯨（史蒂芬港出發）', status: 'confirmed',
-        warning: '史蒂芬港距離雪梨市區車程約2.5~3小時，來回幾乎是一整天的行程，隔天(Day9)還要前往墨爾本，請確認團體/包車的實際返回時間，避免太晚回到市區影響隔天行程與收拾行李',
+        warning: '史蒂芬港距離雪梨市區車程約2.5~3小時，來回幾乎是一整天的行程，隔天(Day8)還要前往墨爾本，請確認團體/包車的實際返回時間，避免太晚回到市區影響隔天行程與收拾行李',
         alternatives: ['天候不佳無法出海時，可改為市區內行程（雪梨塔、達令港、海德公園等）'],
       },
     ],
     notes: [],
   },
   {
-    day: 9, date: '2026-10-01', weekday: '星期四',
+    day: 8, date: '2026-10-01', weekday: '星期四',
     city: '雪梨 → 墨爾本', citySlug: 'melbourne',
     accommodation: {
       name: 'High-Rise 3-Bed Apartment with Premium Amenities', nights: 3,
@@ -175,7 +166,7 @@ const DAYS = [
     notes: ['雪梨→墨爾本交通尚未安排，請盡快訂票'],
   },
   {
-    day: 10, date: '2026-10-02', weekday: '星期五',
+    day: 9, date: '2026-10-02', weekday: '星期五',
     city: '墨爾本', citySlug: 'melbourne',
     accommodation: null,
     segments: [
@@ -199,7 +190,7 @@ const DAYS = [
     notes: ['本日的一日遊與晚餐都尚未定案，先列出所有候選方案，之後確認後記得回來更新這一頁'],
   },
   {
-    day: 11, date: '2026-10-03', weekday: '星期六',
+    day: 10, date: '2026-10-03', weekday: '星期六',
     city: '墨爾本', citySlug: 'melbourne',
     accommodation: null,
     segments: [
@@ -214,7 +205,7 @@ const DAYS = [
     notes: [],
   },
   {
-    day: 12, date: '2026-10-04', weekday: '星期日',
+    day: 11, date: '2026-10-04', weekday: '星期日',
     city: '墨爾本', citySlug: 'melbourne',
     accommodation: null,
     segments: [
@@ -231,7 +222,7 @@ const DAYS = [
     notes: [],
   },
   {
-    day: 13, date: '2026-10-05', weekday: '星期一',
+    day: 12, date: '2026-10-05', weekday: '星期一',
     city: '返抵台灣', citySlug: null,
     accommodation: null,
     segments: [
@@ -357,13 +348,12 @@ const CITY_GUIDES = {
 
 const CHECKLIST = [
   { item: '申請 ETA 電子簽證', detail: '建議出發前及早申請完成，Excel 上寫的費用（400元）幣別待確認' },
-  { item: '確認布里斯本住宿', detail: 'Day2（9/24）晚上目前尚未預訂' },
-  { item: '確認雪梨 → 墨爾本交通', detail: 'Day9（10/1）目前完全沒有安排，建議盡快訂國內線機票' },
+  { item: '確認雪梨 → 墨爾本交通', detail: 'Day8（10/1）目前完全沒有安排，建議盡快訂國內線機票' },
   { item: '確認雪梨 Meriton Suites 房型', detail: '訂房參數顯示 adults=6/rooms=1，需跟訂房網站或飯店再次確認房間是否住得下6人' },
-  { item: '決定 Day10 墨爾本行程', detail: '普芬比利小火車 / 菲利浦島企鵝歸巢，兩者皆全天行程，需擇一' },
-  { item: '確認 Day2 雪梨轉機動線', detail: '國際線10:45落地、國內線13:40起飛，中間2小時55分含入境+提領行李+航廈接駁，6人份行李建議提早準備好隨身文件' },
-  { item: '確認 Day6 黃金海岸退房→機場銜接時間', detail: '12:20的捷星航班，退房與到機場的時間目前沒有明確安排' },
-  { item: '確認 Day12 墨爾本返程銜接時間', detail: '21:50起飛，白天行程排到15:00才回市區，記得預留退房、拿行李、到機場的時間' },
+  { item: '決定 Day9 墨爾本行程', detail: '普芬比利小火車 / 菲利浦島企鵝歸巢，兩者皆全天行程，需擇一' },
+  { item: '確認 Day2 雪梨轉機＋布里斯本快閃動線', detail: '國際線10:45落地、國內線13:40起飛，中間2小時55分含入境+提領行李+航廈接駁；布里斯本改成不過夜，當晚還要再移動到黃金海岸，建議留意6人的體力安排' },
+  { item: '確認 Day5 黃金海岸退房→機場銜接時間', detail: '12:20的捷星航班，退房與到機場的時間目前沒有明確安排' },
+  { item: '確認 Day11 墨爾本返程銜接時間', detail: '21:50起飛，白天行程排到15:00才回市區，記得預留退房、拿行李、到機場的時間' },
   { item: '準備各城市交通卡儲值金', detail: 'Go Card（布里斯本/黃金海岸）、Opal Card（雪梨）、Myki Card（墨爾本）' },
   { item: '國際旅遊保險', detail: '' },
   { item: '網卡 / 漫遊 / Wifi 分享器', detail: '' },
@@ -371,8 +361,7 @@ const CHECKLIST = [
 ];
 
 const OPEN_ISSUES = [
-  { day: 9, issue: '雪梨→墨爾本交通尚未安排', suggestion: '建議訂國內線班機，約1.5~2小時（Qantas / Jetstar / Virgin Australia）' },
-  { day: 2, issue: '布里斯本住宿尚未訂', suggestion: '需盡快確認飯店，避免影響入住與後續行程' },
-  { day: 10, issue: '普芬比利小火車 / 菲利浦島企鵝歸巢 尚未定案', suggestion: '兩者皆全天行程，需擇一；同一天的兩個晚餐選項也需要收斂成一個' },
-  { day: 6, issue: '雪梨 Meriton Suites 房型可能不足6人', suggestion: '訂房連結參數是 adults=6/rooms=1，跟其他城市訂3房不同，建議再次確認' },
+  { day: 8, issue: '雪梨→墨爾本交通尚未安排', suggestion: '建議訂國內線班機，約1.5~2小時（Qantas / Jetstar / Virgin Australia）' },
+  { day: 9, issue: '普芬比利小火車 / 菲利浦島企鵝歸巢 尚未定案', suggestion: '兩者皆全天行程，需擇一；同一天的兩個晚餐選項也需要收斂成一個' },
+  { day: 5, issue: '雪梨 Meriton Suites 房型可能不足6人', suggestion: '訂房連結參數是 adults=6/rooms=1，跟其他城市訂3房不同，建議再次確認' },
 ];

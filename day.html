@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>單日行程｜澳洲旅遊手冊</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header class="app-header" id="app-header"></header>
+<main>
+  <div class="day-nav" id="day-nav-top"></div>
+
+  <h2 class="section-title" style="margin-top:0">今天在：<span id="day-city-title"></span></h2>
+
+  <div id="day-notes"></div>
+  <div id="accommodation"></div>
+
+  <h2 class="section-title">時間軸</h2>
+  <div class="timeline" id="timeline"></div>
+
+  <div class="day-nav" id="day-nav-bottom"></div>
+</main>
+<footer>時間與交通方式為預估，實際請以航空公司/官方資訊為準</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>renderDayPage();</script>
+</body>
+</html>

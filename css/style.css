@@ -1,0 +1,385 @@
+:root {
+  --brisbane: #2f6fed;
+  --goldcoast: #e8871e;
+  --sydney: #0f9b8e;
+  --melbourne: #7c4dff;
+  --neutral: #6b7280;
+
+  --confirmed: #1a9f5a;
+  --tbd: #d64545;
+  --candidate: #d99a1b;
+  --action: #6b7280;
+
+  --bg: #f7f7f9;
+  --card-bg: #ffffff;
+  --text: #1f2430;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+  line-height: 1.5;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--text);
+  color: #fff;
+  padding: 14px 16px;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.app-header .trip-range {
+  font-size: 13px;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.nav-tabs a {
+  font-size: 13px;
+  background: rgba(255,255,255,0.12);
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.nav-tabs a.active {
+  background: #fff;
+  color: var(--text);
+  font-weight: 600;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 24px 0 10px;
+  color: var(--text-muted);
+}
+
+.day-card {
+  display: block;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 6px solid var(--neutral);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.day-card.today {
+  outline: 2px solid #111;
+  outline-offset: 1px;
+}
+
+.day-card .day-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.day-card .day-label {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.day-card .day-date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.day-card .day-city {
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.day-card .day-issue {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--tbd);
+}
+
+.city-brisbane { border-left-color: var(--brisbane); }
+.city-goldcoast { border-left-color: var(--goldcoast); }
+.city-sydney { border-left-color: var(--sydney); }
+.city-melbourne { border-left-color: var(--melbourne); }
+
+.today-banner {
+  background: #111;
+  color: #fff;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.today-banner .label {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.today-banner .headline {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.today-banner a {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 13px;
+  text-decoration: underline;
+}
+
+.day-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.day-nav a, .day-nav span {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.day-nav span.disabled {
+  color: #ccc;
+}
+
+.accommodation-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.accommodation-card .badge { margin-bottom: 6px; }
+
+.accommodation-card h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+.accommodation-card .meta {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.accommodation-card .note {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--tbd);
+}
+
+.accommodation-card .booking-link {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 13px;
+  text-decoration: underline;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 4px;
+}
+
+.segment {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.segment .seg-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.segment .seg-time {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  min-width: 64px;
+}
+
+.segment .seg-title {
+  font-size: 15px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: #fff;
+}
+
+.badge.confirmed { background: var(--confirmed); }
+.badge.tbd { background: var(--tbd); }
+.badge.candidate { background: var(--candidate); }
+.badge.action { background: var(--action); }
+.badge.confirmed-needs-check { background: var(--candidate); }
+
+.segment .seg-detail {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.segment .seg-duration {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.segment .seg-warning {
+  margin-top: 6px;
+  font-size: 13px;
+  background: #fff4e5;
+  border: 1px solid #f0d9a8;
+  border-radius: 6px;
+  padding: 8px;
+  color: #8a5a00;
+}
+
+.segment .seg-alt {
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.segment .seg-alt ul {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+
+.notes-box {
+  background: #fff9e6;
+  border: 1px solid #f0e0a0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.notes-box ul {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+
+.city-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.city-tile {
+  display: block;
+  padding: 16px;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+}
+
+.tile-brisbane { background: var(--brisbane); }
+.tile-goldcoast { background: var(--goldcoast); }
+.tile-sydney { background: var(--sydney); }
+.tile-melbourne { background: var(--melbourne); }
+
+.guide-section {
+  margin-bottom: 20px;
+}
+
+.guide-section h2 {
+  font-size: 15px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 6px;
+}
+
+.attraction {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.attraction .name { font-weight: 600; font-size: 14px; }
+.attraction .howto { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.attraction .desc { font-size: 13px; margin-top: 4px; }
+
+.checklist-item {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.checklist-item input { margin-top: 3px; }
+.checklist-item .item-text .title { font-weight: 600; font-size: 14px; }
+.checklist-item .item-text .detail { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+.issue-card {
+  background: #fdeceb;
+  border: 1px solid #f3c6c2;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.issue-card .issue-title { font-weight: 700; font-size: 14px; color: var(--tbd); }
+.issue-card .issue-suggestion { font-size: 13px; margin-top: 4px; }
+.issue-card a { text-decoration: underline; font-size: 12px; }
+
+footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 24px 16px 40px;
+}

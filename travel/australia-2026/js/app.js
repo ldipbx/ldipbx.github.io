@@ -123,8 +123,22 @@ function dayCardHtml(d, badgeClass, isToday, hasIssue) {
 
 function mapLink(query) {
   if (!query) return '';
-  const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
-  return `<a class="map-link" href="${url}" target="_blank" rel="noopener">📍 在地圖上查看</a>`;
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  const imagesUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`;
+  return `<a class="map-link" href="${mapsUrl}" target="_blank" rel="noopener">📍 在地圖上查看</a><a class="map-link" href="${imagesUrl}" target="_blank" rel="noopener">🖼 看照片</a>`;
+}
+
+// 幫有 wikiTitle 的段落非同步補上維基百科縮圖，抓不到就整塊移除不留空白
+function hydratePhotos(root) {
+  (root || document).querySelectorAll('.seg-photo[data-wiki]').forEach((el) => {
+    getWikiThumbnail(el.dataset.wiki).then((url) => {
+      if (url) {
+        el.innerHTML = `<img src="${url}" alt="" loading="lazy" />`;
+      } else {
+        el.remove();
+      }
+    });
+  });
 }
 
 function renderHeader(active) {
@@ -406,6 +420,7 @@ function renderDayPage() {
           <span class="seg-title">${s.title}${s.flightNo ? `（${s.flightNo}）` : ''}</span>
           ${badge(s.status)}
         </div>
+        ${s.wikiTitle ? `<div class="seg-photo" data-wiki="${s.wikiTitle}"></div>` : ''}
         ${s.desc ? `<div class="seg-about">${s.desc}</div>` : ''}
         ${s.duration ? `<div class="seg-duration">${durationLabel(s.type)}：${s.duration}</div>` : ''}
         ${s.howTo ? `<div class="seg-detail">🚌 ${s.howTo}</div>` : ''}
@@ -416,6 +431,8 @@ function renderDayPage() {
     </div>
   `;
   }).join('');
+
+  hydratePhotos(timelineEl);
 
   if (isToday) {
     const els = timelineEl.querySelectorAll('.segment');

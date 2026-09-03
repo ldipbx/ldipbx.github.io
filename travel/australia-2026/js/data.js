@@ -75,7 +75,7 @@ const DAYS = [
       {
         time: '10:00', type: 'activity', title: '衝浪者天堂 Surfers Paradise', status: 'confirmed', duration: '建議1~2小時',
         desc: '黃金海岸最知名的海灘與商圈，綿延數公里的金黃沙灘搭配高樓天際線，是黃金海岸的門面地標，沿海濱有步道，週三五日下午還有濱海市場。',
-        howTo: '沙灘散步、拍照', mapQuery: 'Surfers Paradise, Gold Coast, Australia',
+        howTo: '沙灘散步、拍照', mapQuery: 'Surfers Paradise, Gold Coast, Australia', wikiTitle: 'Surfers Paradise, Queensland',
       },
       {
         time: '15:00', type: 'activity', title: 'Pacific Fair Shopping Centre 逛街', status: 'confirmed', duration: '建議1.5~2小時',
@@ -90,7 +90,7 @@ const DAYS = [
       {
         time: '18:00', type: 'activity', title: 'Sky Point Q1大廈 看夜景', duration: '建議1小時',
         desc: 'Q1大廈啟用時曾是南半球最高的住宅大樓，77樓的SkyPoint觀景台可360度俯瞰整個黃金海岸海岸線，天氣好時視野能遠眺布里斯本方向。',
-        howTo: '77樓高空景觀台', status: 'confirmed', mapQuery: 'SkyPoint Observation Deck, Gold Coast, Australia',
+        howTo: '77樓高空景觀台', status: 'confirmed', mapQuery: 'SkyPoint Observation Deck, Gold Coast, Australia', wikiTitle: 'Q1 Tower',
       },
       {
         time: '晚餐', type: 'meal', title: 'Marios Italian Restaurant', status: 'confirmed', duration: '約1~1.5小時',
@@ -108,7 +108,7 @@ const DAYS = [
       {
         time: '上午', type: 'activity', title: '可倫賓動物園 Currumbin Wildlife Sanctuary', status: 'confirmed', duration: '建議2~3小時',
         desc: '1947年開園的野生動物保護區，以能近距離餵食野生彩虹吸蜜鸚鵡聞名，園內也有無尾熊互動、袋鼠放養區等體驗行程。',
-        mapQuery: 'Currumbin Wildlife Sanctuary, Australia',
+        mapQuery: 'Currumbin Wildlife Sanctuary, Australia', wikiTitle: 'Currumbin Wildlife Sanctuary',
       },
       {
         time: '下午', type: 'activity', title: 'Outlet 逛街', status: 'confirmed', duration: '建議2小時',
@@ -140,18 +140,18 @@ const DAYS = [
       {
         time: '14:00', type: 'activity', title: '岩石區 The Rocks', status: 'confirmed', duration: '建議1~1.5小時',
         desc: '雪梨最早開發的區域，1788年英國殖民船隊在此登陸，保留了不少殖民時期的砂岩建築與石板巷弄，現在巷弄裡有工藝品市集、酒吧與餐廳，白天晚上氣氛不太一樣，很適合單純散步感受新舊交融的雪梨。',
-        mapQuery: 'The Rocks, Sydney, Australia',
+        mapQuery: 'The Rocks, Sydney, Australia', wikiTitle: 'The Rocks, New South Wales',
       },
       {
         time: '16:00', type: 'activity', title: '逛環形碼頭，拍雪梨歌劇院', status: 'confirmed', duration: '建議1小時',
         desc: '雪梨渡輪、火車、巴士的轉運樞紐，也是眺望歌劇院跟港灣大橋同框的經典拍照點，碼頭邊常有街頭藝人表演，傍晚時分光線很適合拍照。',
-        mapQuery: 'Circular Quay, Sydney, Australia',
+        mapQuery: 'Circular Quay, Sydney, Australia', wikiTitle: 'Circular Quay',
       },
       {
         time: '18:00', type: 'activity', title: '雪梨歌劇院 + 雪梨港灣大橋', status: 'confirmed', duration: '建議1.5~2小時（含拍照）',
         desc: '歌劇院的白色風帆屋頂由丹麥建築師約恩·烏松設計，1973年啟用，2007年被列入世界文化遺產，是雪梨最具代表性的地標；港灣大橋暱稱「衣架橋」(The Coathanger)，是全世界最寬的長跨距鋼拱橋之一，除了走路過橋，也可以報名攀橋(BridgeClimb)活動登頂。',
         howTo: '由北到南走約20分鐘，大橋入口在岩石區的 Argyle Stairs（爬樓梯）或 Bridge Stairs（樓梯/電梯）',
-        mapQuery: 'Sydney Opera House, Australia',
+        mapQuery: 'Sydney Opera House, Australia', wikiTitle: 'Sydney Opera House',
       },
     ],
     notes: [],
@@ -166,7 +166,7 @@ const DAYS = [
         duration: '搭火車約2小時，或報名一日遊行程',
         desc: '因山谷間大片尤加利樹釋放的油氣在陽光下散射出藍色薄霧而得名，1994年被列入世界自然遺產，是雪梨近郊最受歡迎的一日遊景點。',
         howTo: '主要4個景點可搭纜車俯瞰全景：景觀世界(Scenic World)、回音谷(Echo Point)、巨人階梯(Giant Stairway)、三姊妹岩(Three Sisters)',
-        alternatives: [], mapQuery: 'Blue Mountains National Park, Australia',
+        alternatives: [], mapQuery: 'Blue Mountains National Park, Australia', wikiTitle: 'Blue Mountains National Park',
       },
     ],
     notes: [],
@@ -181,7 +181,7 @@ const DAYS = [
         desc: '史蒂芬港是雪梨北邊熱門的賞鯨基地，9月正值座頭鯨沿東岸南返南極洲的季節，海況允許時很有機會看到鯨魚躍出水面。訂票時可以留意船家有沒有「當天看不到鯨魚可免費再出船一次」的保障。',
         warning: '史蒂芬港距離雪梨市區車程約2.5~3小時，來回幾乎是一整天的行程，隔天(Day8)還要前往墨爾本，請確認團體/包車的實際返回時間，避免太晚回到市區影響隔天行程與收拾行李',
         alternatives: ['天候不佳無法出海時，可改為市區內行程（雪梨塔、達令港、海德公園等）'],
-        mapQuery: 'Port Stephens, Australia',
+        mapQuery: 'Port Stephens, Australia', wikiTitle: 'Port Stephens',
       },
     ],
     notes: [],
@@ -217,7 +217,7 @@ const DAYS = [
         howTo: '貝爾格雷夫站（Belgrave）至湖濱車站（Lakeside），需事先訂票，位子建議選前面，不然中間會拍到別人的手',
         duration: '半天～全天，中午可在 Lakeside 站吃午餐',
         alternatives: ['與下方菲利浦島擇一，兩者都是全天行程無法同天完成'],
-        mapQuery: 'Puffing Billy Railway, Belgrave, Australia',
+        mapQuery: 'Puffing Billy Railway, Belgrave, Australia', wikiTitle: 'Puffing Billy Railway',
       },
       {
         time: '全天（二選一）', type: 'activity', title: '菲利浦島一日遊 Phillip Island', status: 'candidate',
@@ -225,7 +225,7 @@ const DAYS = [
         duration: '全天（含晚上企鵝歸巢）',
         howTo: '彩虹小屋沙灘 Brighton Beach、月光野生動物園、格蘭特岬角及諾比斯、企鵝歸巢（傍晚～晚上才開始，建議晚去晚回）',
         alternatives: ['與上方普芬比利小火車擇一，兩者都是全天行程無法同天完成'],
-        mapQuery: 'Phillip Island, Australia',
+        mapQuery: 'Phillip Island, Australia', wikiTitle: 'Phillip Island',
       },
       {
         time: '晚上（擇一）', type: 'meal', title: '晚餐：亞拉河 Yarra River 畔 / BangPop 泰式料理',
@@ -246,6 +246,7 @@ const DAYS = [
         time: '全天', type: 'activity', title: '大洋路一日遊 Great Ocean Road', status: 'confirmed',
         desc: '全長約240公里的濱海公路，沿途經過衝浪勝地、雨林步道，終點的十二使徒岩是石灰岩海崖經上萬年海浪侵蝕後留下的獨立岩柱群，因持續侵蝕目前僅剩約8座，是大洋路最具代表性的地標。',
         howTo: '起點 Memorial Arch（可停留5分鐘拍照，旁邊有小沙灘）→ Great Otway 國家公園 → 坎貝爾港國家公園 Twelve Apostles 十二使徒岩（風很大）→ Maits Rest Rainforest Walk（約停留30-45分）→ 阿德湖峽',
+        wikiTitle: 'Twelve Apostles (Victoria)',
         alternatives: [], mapQuery: 'Great Ocean Road, Australia',
       },
       { time: '途中', type: 'meal', title: 'The Scalloppie（干貝派，白醬口味）', status: 'confirmed' },
@@ -261,19 +262,19 @@ const DAYS = [
       {
         time: '09:00', type: 'activity', title: 'Coffee Laneway 咖啡街', status: 'confirmed', duration: '建議1小時',
         desc: '福林德斯車站周邊巷弄聚集了墨爾本最密集的精品咖啡館，Degraves Street是其中最有名的一條，兩側都是露天座位，很有歐洲街邊咖啡館的氛圍。',
-        mapQuery: 'Degraves Street, Melbourne, Australia',
+        mapQuery: 'Degraves Street, Melbourne, Australia', wikiTitle: 'Degraves Street',
       },
       {
         time: '11:00', type: 'activity', title: 'State Library Victoria', status: 'confirmed', duration: '建議1~1.5小時',
         desc: '1854年啟用，是澳洲最古老的公共圖書館之一，圓頂閱覽室(La Trobe Reading Room)由上往下拍呈放射狀書桌排列，是熱門拍照點。',
-        howTo: '很美的圖書館，10:00-18:00開放', mapQuery: 'State Library Victoria, Australia',
+        howTo: '很美的圖書館，10:00-18:00開放', mapQuery: 'State Library Victoria, Australia', wikiTitle: 'State Library Victoria',
       },
       {
         time: '13:00（二選一）', type: 'activity', title: '方案A：Brighton Beach 彩虹小屋沙灘（拉長停留）', status: 'candidate',
         duration: '建議2.5~3小時（含往返車程），逛完直接前往機場',
         desc: '海灘上一整排色彩繽紛的木造更衣小屋(Bathing Boxes)，每間顏色都不同，是墨爾本最上鏡的景點之一，但離市區有段距離。',
         howTo: '搭火車Sandringham線從Flinders Street站出發，單趟約30-40分鐘。選這個方案的話，建議逛完不要再回市區，直接從Brighton前往機場，比較好抓時間',
-        mapQuery: 'Brighton Beach, Melbourne, Australia',
+        mapQuery: 'Brighton Beach, Melbourne, Australia', wikiTitle: 'Brighton, Victoria',
         alternatives: ['與下方聖科達方案擇一，兩者時間都抓得比較剛好，不建議兩個都排'],
       },
       {
@@ -281,7 +282,7 @@ const DAYS = [
         duration: '建議2小時',
         desc: '墨爾本最受歡迎的海濱郊區，聖科達碼頭旁的防波堤石堆是野生小企鵝(Little Penguins)的棲息地，傍晚天黑後容易看到牠們上岸，海灘旁也有百年歷史的Luna Park遊樂園。',
         howTo: '市區搭電車約20分鐘，比Brighton近很多，逛完後時間比較好抓，回程也還有餘裕順路回市區逛一下',
-        mapQuery: 'St Kilda, Melbourne, Australia',
+        mapQuery: 'St Kilda, Melbourne, Australia', wikiTitle: 'St Kilda, Victoria',
         alternatives: ['與上方Brighton Beach方案擇一，兩者時間都抓得比較剛好，不建議兩個都排'],
       },
       {

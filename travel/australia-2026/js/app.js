@@ -50,26 +50,24 @@ function formatRelativeTime(ts) {
   return `${Math.round(diffMin / 60)}小時前`;
 }
 
-// 掛上「上次更新：X · 重新整理」的控制列，applyFn(map) 負責把資料畫面上去
-function setupWeatherRefresh(statusElId, applyFn) {
+// 顯示「天氣更新於 X」文字，實際的重新整理動作統一交給標題列右上角的
+// 全域「🔄 更新」按鈕負責，按下去之後會透過 window.onTripDataRefreshed 通知這裡重畫
+function setupWeatherStatus(statusElId, applyFn) {
   const statusEl = document.getElementById(statusElId);
-  if (!statusEl) return;
 
   function renderStatus() {
-    statusEl.innerHTML = `<span class="wx-status-text">天氣更新於 ${formatRelativeTime(WeatherStore.getFetchedAt())}</span><button type="button" class="refresh-btn">🔄 重新整理</button>`;
-    statusEl.querySelector('.refresh-btn').addEventListener('click', () => {
-      statusEl.innerHTML = '<span class="wx-status-text">重新整理中…</span>';
-      WeatherStore.refresh().then((map) => {
-        applyFn(map);
-        renderStatus();
-      });
+    if (statusEl) statusEl.innerHTML = `<span class="wx-status-text">天氣更新於 ${formatRelativeTime(WeatherStore.getFetchedAt())}</span>`;
+  }
+
+  function load() {
+    WeatherStore.getAll().then((map) => {
+      applyFn(map);
+      renderStatus();
     });
   }
 
-  WeatherStore.getAll().then((map) => {
-    applyFn(map);
-    renderStatus();
-  });
+  load();
+  window.onTripDataRefreshed = load;
 }
 
 function mapLink(query) {
@@ -97,7 +95,16 @@ function renderHeader(active) {
         <h1>澳洲旅遊手冊</h1>
         <div class="trip-range">${TRIP.start} ~ ${TRIP.end}｜${TRIP.travelers}人</div>
       </div>
-      <a href="currency.html" class="quick-currency ${active === 'currency.html' ? 'active' : ''}" title="匯率換算">💱</a>
+      <div class="header-actions">
+        <button type="button" class="icon-btn" id="header-refresh-btn" title="更新天氣與匯率資料">
+          <span class="icon-emoji">🔄</span>
+          <span class="icon-label">更新</span>
+        </button>
+        <a href="currency.html" class="icon-btn ${active === 'currency.html' ? 'active' : ''}" title="匯率換算">
+          <span class="icon-emoji">💱</span>
+          <span class="icon-label">匯率</span>
+        </a>
+      </div>
     </div>
     <nav class="nav-tabs">
       ${tabs.map((t) => `<a href="${t.href}" class="${t.href.startsWith(active) ? 'active' : ''}">${t.label}</a>`).join('')}
@@ -110,6 +117,29 @@ function renderHeader(active) {
   if (activeTab) {
     activeTab.scrollIntoView({ inline: 'center', block: 'nearest' });
   }
+
+  document.getElementById('header-refresh-btn').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    const labelEl = btn.querySelector('.icon-label');
+    if (btn.classList.contains('spinning')) return; // 避免連續點擊重複觸發
+    const original = labelEl.textContent;
+    btn.classList.add('spinning');
+    labelEl.textContent = '更新中';
+    await refreshAllData();
+    btn.classList.remove('spinning');
+    labelEl.textContent = '完成';
+    setTimeout(() => { labelEl.textContent = original; }, 1500);
+  });
+}
+
+// 不管目前在哪一頁，強制重新抓天氣+匯率並更新快取；
+// 如果當頁有顯示天氣/匯率，會呼叫 window.onTripDataRefreshed 讓那一頁的畫面也跟著更新
+async function refreshAllData() {
+  const tasks = [];
+  if (typeof WeatherStore !== 'undefined') tasks.push(WeatherStore.refresh());
+  if (typeof getAudToTwdRate === 'function') tasks.push(getAudToTwdRate(true));
+  await Promise.allSettled(tasks);
+  if (typeof window.onTripDataRefreshed === 'function') window.onTripDataRefreshed();
 }
 
 function renderOpenIssuesList(container, issues) {
@@ -193,7 +223,7 @@ function renderIndexPage() {
     `;
   }).join('');
 
-  setupWeatherRefresh('wx-status', (map) => {
+  setupWeatherStatus('wx-status', (map) => {
     document.querySelectorAll('.day-wx[data-date]').forEach((el) => {
       el.innerHTML = renderWeatherChip(map[el.dataset.date]);
     });
@@ -218,7 +248,7 @@ function renderDayPage() {
   `;
 
   if (day.citySlug) {
-    setupWeatherRefresh('ctx-wx-status', (map) => {
+    setupWeatherStatus('ctx-wx-status', (map) => {
       const el = document.getElementById('ctx-wx');
       if (!el) return;
       const info = map[day.date];
@@ -395,9 +425,10 @@ function renderCurrencyPage() {
     };
   }
 
-  function load(forceRefresh) {
-    rateInfoEl.innerHTML = forceRefresh ? '重新整理中…' : '匯率讀取中…';
-    getAudToTwdRate(forceRefresh).then((info) => {
+  // 重新整理統一交給標題列右上角的「🔄 更新」按鈕，這裡只負責顯示、
+  // 並在 window.onTripDataRefreshed 被呼叫時重新讀一次（已經是快取好的新資料，不會再打一次API）
+  function load() {
+    getAudToTwdRate().then((info) => {
       if (!info) {
         rateInfoEl.textContent = '目前抓不到匯率資料，且沒有先前的快取，請確認網路連線';
         return;
@@ -409,14 +440,14 @@ function renderCurrencyPage() {
         1 AUD ≈ ${rate.toFixed(2)} TWD${info.stale ? '<span class="rate-stale">（離線快取，非即時）</span>' : ''}
         <div class="rate-updated">匯率資料時間：${updatedText}（提供方每天只更新一次，不會跟著重新整理變動）</div>
         <div class="rate-updated">上次幫你重新整理：${formatRelativeTime(info.fetchedAt)}</div>
-        <button type="button" class="refresh-btn" id="rate-refresh-btn">🔄 重新整理</button>
+        <div class="rate-hint">想拿最新匯率可以點右上角的「🔄 更新」</div>
       `;
-      document.getElementById('rate-refresh-btn').addEventListener('click', () => load(true));
       bindInputs(rate);
     });
   }
 
-  load(false);
+  load();
+  window.onTripDataRefreshed = load;
 }
 
 // ---- checklist.html ----

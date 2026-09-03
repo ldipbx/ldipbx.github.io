@@ -333,7 +333,9 @@ function renderDayPage() {
     pickerEl.innerHTML = DAYS.map((d) => {
       const badgeClass = d.citySlug ? `badge-${d.citySlug}` : 'badge-neutral';
       const isActive = d.day === day.day;
-      return `<a href="day.html?d=${d.day}" class="day-pill ${badgeClass} ${isActive ? 'active' : ''}">${d.day}</a>`;
+      const [, m, dd] = d.date.split('-');
+      const shortDate = `${parseInt(m, 10)}/${parseInt(dd, 10)}`;
+      return `<a href="day.html?d=${d.day}" class="day-pill ${badgeClass} ${isActive ? 'active' : ''}"><span class="pill-date">${shortDate}</span><span class="pill-daynum">Day${d.day}</span></a>`;
     }).join('');
     const activePill = pickerEl.querySelector('.day-pill.active');
     if (activePill) activePill.scrollIntoView({ inline: 'center', block: 'nearest' });

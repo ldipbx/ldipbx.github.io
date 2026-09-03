@@ -508,18 +508,43 @@ function renderCurrencyPage() {
 }
 
 // ---- checklist.html ----
+const CHECKLIST_STATE_KEY = 'au_trip_checklist_state_v1';
+
+function loadChecklistState() {
+  try {
+    return JSON.parse(localStorage.getItem(CHECKLIST_STATE_KEY)) || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveChecklistState(state) {
+  try { localStorage.setItem(CHECKLIST_STATE_KEY, JSON.stringify(state)); } catch (e) { /* 存不進去就算了 */ }
+}
+
 function renderChecklistPage() {
   renderHeader('checklist.html');
 
+  const state = loadChecklistState();
+
   document.getElementById('checklist').innerHTML = CHECKLIST.map((c) => `
     <label class="checklist-item">
-      <input type="checkbox" />
+      <input type="checkbox" data-key="${c.item}" ${state[c.item] ? 'checked' : ''} />
       <span class="item-text">
         <div class="title">${c.item}</div>
         ${c.detail ? `<div class="detail">${c.detail}</div>` : ''}
       </span>
     </label>
   `).join('');
+
+  // 勾選狀態存進 localStorage，重新整理或下次再開這頁都會記得
+  document.querySelectorAll('#checklist input[type="checkbox"]').forEach((input) => {
+    input.addEventListener('change', () => {
+      const current = loadChecklistState();
+      current[input.dataset.key] = input.checked;
+      saveChecklistState(current);
+    });
+  });
 
   renderOpenIssuesList(document.getElementById('open-issues'), OPEN_ISSUES);
 }

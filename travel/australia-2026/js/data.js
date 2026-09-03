@@ -216,7 +216,7 @@ const DAYS = [
       { time: '途中', type: 'meal', title: 'The Scalloppie（干貝派，白醬口味）', status: 'confirmed' },
       { time: '途中', type: 'meal', title: 'Dooley’s（巧克力系列冰淇淋）', status: 'confirmed' },
     ],
-    notes: [],
+    notes: ['提醒：明天(10/4)凌晨澳洲會實施夏令節約時間，墨爾本會從快台灣2小時變成快3小時'],
   },
   {
     day: 11, date: '2026-10-04', weekday: '星期日',
@@ -234,7 +234,9 @@ const DAYS = [
       },
       { time: '21:50', type: 'flight', title: '墨爾本機場 T2 出發', flightNo: 'CI058', duration: '約9小時25分', status: 'confirmed', mapQuery: 'Melbourne Airport Terminal 2, Australia' },
     ],
-    notes: [],
+    notes: [
+      '⏰ 今天凌晨2點澳洲會實施夏令節約時間，時鐘直接跳到3點（少一小時）。從今天開始墨爾本比台灣快3小時（前幾天是快2小時），手機通常會自動校正，但要留意這個變化，晚上21:50的班機時間已經是校正後的時間，不用再自己換算',
+    ],
   },
   {
     day: 12, date: '2026-10-05', weekday: '星期一',

@@ -394,7 +394,8 @@ function renderCurrencyPage() {
       const updatedText = Number.isNaN(updated.getTime()) ? info.updatedAt : updated.toLocaleString('zh-TW');
       rateInfoEl.innerHTML = `
         1 AUD ≈ ${rate.toFixed(2)} TWD${info.stale ? '<span class="rate-stale">（離線快取，非即時）</span>' : ''}
-        <div class="rate-updated">匯率更新時間：${updatedText}</div>
+        <div class="rate-updated">匯率資料時間：${updatedText}（提供方每天只更新一次，不會跟著重新整理變動）</div>
+        <div class="rate-updated">上次幫你重新整理：${formatRelativeTime(info.fetchedAt)}</div>
         <button type="button" class="refresh-btn" id="rate-refresh-btn">🔄 重新整理</button>
       `;
       document.getElementById('rate-refresh-btn').addEventListener('click', () => load(true));

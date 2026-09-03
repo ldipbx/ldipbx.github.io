@@ -85,37 +85,38 @@ a:active, .day-card:active, .trip-card:active {
   width: 46px;
   height: 46px;
   border-radius: 12px;
-  background: #fff;
+  background: transparent;
   border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1px;
-  color: var(--text);
+  color: #fff;
   font-family: inherit;
   -webkit-appearance: none;
   appearance: none;
 }
 
 .icon-btn .icon-emoji {
-  font-size: 17px;
+  font-size: 18px;
   line-height: 1;
 }
 
 .icon-btn .icon-label {
   font-size: 9px;
   font-weight: 700;
-  opacity: 0.75;
+  color: #fff;
+  opacity: 0.85;
 }
 
 .icon-btn:active {
-  background: #e5e7eb;
+  background: rgba(255, 255, 255, 0.15);
 }
 
-.icon-btn.active {
-  background: var(--brisbane);
-  color: #fff;
+.icon-btn.active .icon-label {
+  color: #8fc1ff;
+  opacity: 1;
 }
 
 @keyframes icon-spin {

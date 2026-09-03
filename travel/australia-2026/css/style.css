@@ -634,6 +634,13 @@ main {
 .badge.action { background: var(--action); }
 .badge.confirmed-needs-check { background: var(--candidate); }
 
+.seg-content .seg-about {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
 .seg-content .seg-duration {
   margin-top: 4px;
   font-size: 12px;

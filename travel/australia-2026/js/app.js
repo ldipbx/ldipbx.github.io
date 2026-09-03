@@ -394,6 +394,7 @@ function renderDayPage() {
           <span class="seg-title">${s.title}${s.flightNo ? `（${s.flightNo}）` : ''}</span>
           ${badge(s.status)}
         </div>
+        ${s.desc ? `<div class="seg-about">${s.desc}</div>` : ''}
         ${s.duration ? `<div class="seg-duration">${durationLabel(s.type)}：${s.duration}</div>` : ''}
         ${s.howTo ? `<div class="seg-detail">🚌 ${s.howTo}</div>` : ''}
         ${s.warning ? `<div class="seg-warning">⚠ ${s.warning}</div>` : ''}

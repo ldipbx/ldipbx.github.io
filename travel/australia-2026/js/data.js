@@ -2,6 +2,7 @@
 // 資料整理自 00 raw data/澳洲.xlsx，並依實際機票日期(9/24晚上出發、10/4晚上回程)校正過。
 // 未提供的資訊一律用 status:'tbd' 標記，不自行編造。
 // 各活動的 duration(建議停留時間)為常見旅遊時間的概略估計，非Excel原始資料，僅供抓行程節奏參考。
+// 部分景點補上了 desc(景點簡介)，是公開常見的背景資訊(例如建造年代、設計者)，非Excel原始資料。
 
 const TRIP = {
   start: '2026-09-24',
@@ -112,9 +113,22 @@ const DAYS = [
       },
       { time: '12:20', type: 'flight', title: '捷星航空 飛雪梨', duration: '約1小時15分（估計，請以實際訂位為準）', status: 'confirmed' },
       { time: '抵達後', type: 'transport', title: '雪梨飯店 Check in', status: 'confirmed' },
-      { time: '14:00', type: 'activity', title: '岩石區 The Rocks', status: 'confirmed', duration: '建議1~1.5小時', mapQuery: 'The Rocks, Sydney, Australia' },
-      { time: '16:00', type: 'activity', title: '逛環形碼頭，拍雪梨歌劇院', status: 'confirmed', duration: '建議1小時', mapQuery: 'Circular Quay, Sydney, Australia' },
-      { time: '18:00', type: 'activity', title: '雪梨歌劇院 + 雪梨港灣大橋', status: 'confirmed', duration: '建議1.5~2小時（含拍照）', howTo: '由北到南走約20分鐘，大橋入口在岩石區的 Argyle Stairs（爬樓梯）或 Bridge Stairs（樓梯/電梯）', mapQuery: 'Sydney Opera House, Australia' },
+      {
+        time: '14:00', type: 'activity', title: '岩石區 The Rocks', status: 'confirmed', duration: '建議1~1.5小時',
+        desc: '雪梨最早開發的區域，1788年英國殖民船隊在此登陸，保留了不少殖民時期的砂岩建築與石板巷弄，現在巷弄裡有工藝品市集、酒吧與餐廳，白天晚上氣氛不太一樣，很適合單純散步感受新舊交融的雪梨。',
+        mapQuery: 'The Rocks, Sydney, Australia',
+      },
+      {
+        time: '16:00', type: 'activity', title: '逛環形碼頭，拍雪梨歌劇院', status: 'confirmed', duration: '建議1小時',
+        desc: '雪梨渡輪、火車、巴士的轉運樞紐，也是眺望歌劇院跟港灣大橋同框的經典拍照點，碼頭邊常有街頭藝人表演，傍晚時分光線很適合拍照。',
+        mapQuery: 'Circular Quay, Sydney, Australia',
+      },
+      {
+        time: '18:00', type: 'activity', title: '雪梨歌劇院 + 雪梨港灣大橋', status: 'confirmed', duration: '建議1.5~2小時（含拍照）',
+        desc: '歌劇院的白色風帆屋頂由丹麥建築師約恩·烏松設計，1973年啟用，2007年被列入世界文化遺產，是雪梨最具代表性的地標；港灣大橋暱稱「衣架橋」(The Coathanger)，是全世界最寬的長跨距鋼拱橋之一，除了走路過橋，也可以報名攀橋(BridgeClimb)活動登頂。',
+        howTo: '由北到南走約20分鐘，大橋入口在岩石區的 Argyle Stairs（爬樓梯）或 Bridge Stairs（樓梯/電梯）',
+        mapQuery: 'Sydney Opera House, Australia',
+      },
     ],
     notes: [],
   },
@@ -213,19 +227,48 @@ const DAYS = [
     city: '墨爾本', citySlug: 'melbourne',
     accommodation: null,
     segments: [
-      { time: '09:00', type: 'activity', title: 'Coffee Laneway 咖啡街', status: 'confirmed', duration: '建議1小時', mapQuery: 'Degraves Street, Melbourne, Australia' },
-      { time: '11:00', type: 'activity', title: 'State Library Victoria', status: 'confirmed', duration: '建議1~1.5小時', howTo: '很美的圖書館，10:00-18:00開放', mapQuery: 'State Library Victoria, Australia' },
-      { time: '13:00', type: 'activity', title: 'Brighton Beach 彩虹小屋沙灘', status: 'confirmed', duration: '建議1小時', mapQuery: 'Brighton Beach, Melbourne, Australia' },
-      { time: '15:00', type: 'activity', title: '搭車回市區逛街', status: 'confirmed', duration: '建議1~2小時（依集合時間彈性調整）', mapQuery: 'Melbourne CBD, Australia' },
+      {
+        time: '09:00', type: 'activity', title: 'Coffee Laneway 咖啡街', status: 'confirmed', duration: '建議1小時',
+        desc: '福林德斯車站周邊巷弄聚集了墨爾本最密集的精品咖啡館，Degraves Street是其中最有名的一條，兩側都是露天座位，很有歐洲街邊咖啡館的氛圍。',
+        mapQuery: 'Degraves Street, Melbourne, Australia',
+      },
+      {
+        time: '11:00', type: 'activity', title: 'State Library Victoria', status: 'confirmed', duration: '建議1~1.5小時',
+        desc: '1854年啟用，是澳洲最古老的公共圖書館之一，圓頂閱覽室(La Trobe Reading Room)由上往下拍呈放射狀書桌排列，是熱門拍照點。',
+        howTo: '很美的圖書館，10:00-18:00開放', mapQuery: 'State Library Victoria, Australia',
+      },
+      {
+        time: '13:00（二選一）', type: 'activity', title: '方案A：Brighton Beach 彩虹小屋沙灘（拉長停留）', status: 'candidate',
+        duration: '建議2.5~3小時（含往返車程），逛完直接前往機場',
+        desc: '海灘上一整排色彩繽紛的木造更衣小屋(Bathing Boxes)，每間顏色都不同，是墨爾本最上鏡的景點之一，但離市區有段距離。',
+        howTo: '搭火車Sandringham線從Flinders Street站出發，單趟約30-40分鐘。選這個方案的話，建議逛完不要再回市區，直接從Brighton前往機場，比較好抓時間',
+        mapQuery: 'Brighton Beach, Melbourne, Australia',
+        alternatives: ['與下方聖科達方案擇一，兩者時間都抓得比較剛好，不建議兩個都排'],
+      },
+      {
+        time: '13:00（二選一）', type: 'activity', title: '方案B：St Kilda 聖科達（推薦，離市區近）', status: 'candidate',
+        duration: '建議2小時',
+        desc: '墨爾本最受歡迎的海濱郊區，聖科達碼頭旁的防波堤石堆是野生小企鵝(Little Penguins)的棲息地，傍晚天黑後容易看到牠們上岸，海灘旁也有百年歷史的Luna Park遊樂園。',
+        howTo: '市區搭電車約20分鐘，比Brighton近很多，逛完後時間比較好抓，回程也還有餘裕順路回市區逛一下',
+        mapQuery: 'St Kilda, Melbourne, Australia',
+        alternatives: ['與上方Brighton Beach方案擇一，兩者時間都抓得比較剛好，不建議兩個都排'],
+      },
+      {
+        time: '（彈性）', type: 'activity', title: '回市區逛街（視上面選哪個方案再決定要不要排）', status: 'candidate',
+        duration: '建議1~2小時',
+        howTo: '如果下午選聖科達（離市區近，時間比較寬裕），可以排這段順路逛一下；如果選Brighton Beach，建議跳過這段直接前往機場',
+        mapQuery: 'Melbourne CBD, Australia',
+      },
       {
         time: '（需自行抓時間）', type: 'transport', title: '前往墨爾本機場', status: 'tbd',
-        warning: '今天白天行程排到15:00後才回市區逛街，晚上21:50就要起飛，記得預留足夠時間退房、拿行李、到機場（墨爾本機場離市區車程約30-40分視路況）',
+        warning: '晚上21:50就要起飛，記得預留足夠時間退房、拿行李、到機場（墨爾本機場離市區車程約30-40分視路況），如果下午選了Brighton Beach方案，記得直接從那裡出發前往機場',
         mapQuery: 'Melbourne Airport, Australia',
       },
       { time: '21:50', type: 'flight', title: '墨爾本機場 T2 出發', flightNo: 'CI058', duration: '約9小時25分', status: 'confirmed', mapQuery: 'Melbourne Airport Terminal 2, Australia' },
     ],
     notes: [
       '⏰ 今天凌晨2點澳洲會實施夏令節約時間，時鐘直接跳到3點（少一小時）。從今天開始墨爾本比台灣快3小時（前幾天是快2小時），手機通常會自動校正，但要留意這個變化，晚上21:50的班機時間已經是校正後的時間，不用再自己換算',
+      '下午的行程先列出Brighton Beach（拉長停留+直接去機場）跟St Kilda（離市區近，時間好抓）兩個方案，先都保留著，之後再決定選哪個',
     ],
   },
   {
@@ -359,7 +402,7 @@ const CHECKLIST = [
   { item: '確認雪梨 Meriton Suites 房型', detail: '訂房參數顯示 adults=6/rooms=1，需跟訂房網站或飯店再次確認房間是否住得下6人' },
   { item: '決定 Day9 墨爾本行程', detail: '普芬比利小火車 / 菲利浦島企鵝歸巢，兩者皆全天行程，需擇一' },
   { item: '確認 Day5 黃金海岸退房→機場銜接時間', detail: '12:20的捷星航班，退房與到機場的時間目前沒有明確安排' },
-  { item: '確認 Day11 墨爾本返程銜接時間', detail: '21:50起飛，白天行程排到15:00才回市區，記得預留退房、拿行李、到機場的時間' },
+  { item: '決定 Day11 下午行程', detail: 'Brighton Beach 或 St Kilda 擇一，21:50起飛，記得預留退房、拿行李、到機場的時間' },
   { item: '準備各城市交通卡儲值金', detail: 'Go Card（布里斯本/黃金海岸）、Opal Card（雪梨）、Myki Card（墨爾本）' },
   { item: '國際旅遊保險', detail: '' },
   { item: '網卡 / 漫遊 / Wifi 分享器', detail: '' },
@@ -370,4 +413,5 @@ const OPEN_ISSUES = [
   { day: 8, issue: '雪梨→墨爾本交通尚未安排', suggestion: '建議訂國內線班機，約1.5~2小時（Qantas / Jetstar / Virgin Australia）' },
   { day: 9, issue: '普芬比利小火車 / 菲利浦島企鵝歸巢 尚未定案', suggestion: '兩者皆全天行程，需擇一；同一天的兩個晚餐選項也需要收斂成一個' },
   { day: 5, issue: '雪梨 Meriton Suites 房型可能不足6人', suggestion: '訂房連結參數是 adults=6/rooms=1，跟其他城市訂3房不同，建議再次確認' },
+  { day: 11, issue: 'Brighton Beach / St Kilda 尚未定案', suggestion: 'Brighton離市區較遠、來回耗時，St Kilda較近較好抓時間，需擇一；當天晚上還有班機，建議盡快決定' },
 ];

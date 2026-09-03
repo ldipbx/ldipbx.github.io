@@ -97,6 +97,13 @@ function renderHeader(active) {
       ${tabs.map((t) => `<a href="${t.href}" class="${t.href.startsWith(active) ? 'active' : ''}">${t.label}</a>`).join('')}
     </nav>
   `;
+
+  // 每次換頁tab bar都會重置捲動位置，如果目前頁籤在最右邊會被擋在畫面外，
+  // 這裡把它捲進可視範圍內，不用使用者自己再手動滑過去找
+  const activeTab = el.querySelector('.nav-tabs a.active');
+  if (activeTab) {
+    activeTab.scrollIntoView({ inline: 'center', block: 'nearest' });
+  }
 }
 
 function renderOpenIssuesList(container, issues) {

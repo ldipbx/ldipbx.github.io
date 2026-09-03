@@ -111,10 +111,12 @@ function renderHeader(active) {
         <div class="trip-range">${TRIP.start} ~ ${TRIP.end}｜${TRIP.travelers}人</div>
       </div>
       <div class="header-actions">
-        <button type="button" class="icon-btn" id="header-refresh-btn" title="更新天氣與匯率資料">
-          <span class="icon-emoji">🔄</span>
-          <span class="icon-label">更新</span>
-        </button>
+        <div class="icon-btn-slot">
+          <button type="button" class="icon-btn" id="header-refresh-btn" title="更新天氣與匯率資料">
+            <span class="icon-emoji">🔄</span>
+            <span class="icon-label">更新</span>
+          </button>
+        </div>
         <a href="currency.html" class="icon-btn ${active === 'currency.html' ? 'active' : ''}" title="匯率換算">
           <span class="icon-emoji">💱</span>
           <span class="icon-label">匯率</span>
@@ -134,6 +136,7 @@ function renderHeader(active) {
   }
 
   document.getElementById('header-refresh-btn').addEventListener('click', async (e) => {
+    dismissRefreshCoachmark();
     const btn = e.currentTarget;
     const labelEl = btn.querySelector('.icon-label');
     if (btn.classList.contains('spinning')) return; // 避免連續點擊重複觸發
@@ -145,6 +148,36 @@ function renderHeader(active) {
     labelEl.textContent = '完成';
     setTimeout(() => { labelEl.textContent = original; }, 1500);
   });
+
+  showRefreshCoachmarkOnce(el);
+}
+
+// 第一次來訪時，在「更新」按鈕旁邊冒出一個小提示說明這是做什麼用的，
+// 點過一次（或看過幾秒後自動消失）就會記住，之後不會再顯示
+const REFRESH_HINT_SEEN_KEY = 'au_trip_seen_refresh_hint_v1';
+
+function dismissRefreshCoachmark() {
+  const mark = document.getElementById('refresh-coachmark');
+  if (mark) mark.remove();
+  try { localStorage.setItem(REFRESH_HINT_SEEN_KEY, '1'); } catch (e) { /* 存不進去就算了 */ }
+}
+
+function showRefreshCoachmarkOnce(headerEl) {
+  let seen = true;
+  try { seen = !!localStorage.getItem(REFRESH_HINT_SEEN_KEY); } catch (e) { /* 讀不到就當作沒看過 */ }
+  if (seen) return;
+
+  const slot = headerEl.querySelector('.icon-btn-slot');
+  if (!slot) return;
+
+  const mark = document.createElement('div');
+  mark.className = 'coachmark';
+  mark.id = 'refresh-coachmark';
+  mark.textContent = '點這裡可以更新天氣預報跟匯率資料';
+  slot.appendChild(mark);
+
+  mark.addEventListener('click', dismissRefreshCoachmark);
+  setTimeout(dismissRefreshCoachmark, 6000);
 }
 
 // 不管目前在哪一頁，強制重新抓天氣+匯率並更新快取；

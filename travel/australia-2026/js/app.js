@@ -113,12 +113,12 @@ function renderHeader(active) {
       <div class="header-actions">
         <div class="icon-btn-slot">
           <button type="button" class="icon-btn" id="header-refresh-btn" title="更新天氣與匯率資料">
-            <span class="icon-emoji">🔄</span>
+            <span class="icon-emoji">↻</span>
             <span class="icon-label">更新</span>
           </button>
         </div>
         <a href="currency.html" class="icon-btn ${active === 'currency.html' ? 'active' : ''}" title="匯率換算">
-          <span class="icon-emoji">💱</span>
+          <span class="icon-emoji">⇄</span>
           <span class="icon-label">匯率</span>
         </a>
       </div>

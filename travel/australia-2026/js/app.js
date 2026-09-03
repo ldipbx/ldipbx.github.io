@@ -42,6 +42,42 @@ function badge(status) {
   return `<span class="badge ${status}">${label}</span>`;
 }
 
+// 用真正的IANA時區名稱交給瀏覽器換算，夏令節約時間切換完全不用自己判斷
+// 布里斯本/黃金海岸在昆士蘭，不跟著實施夏令時間；雪梨/墨爾本會
+const CITY_TIMEZONES = {
+  brisbane: 'Australia/Brisbane',
+  goldcoast: 'Australia/Brisbane',
+  sydney: 'Australia/Sydney',
+  melbourne: 'Australia/Melbourne',
+};
+
+function formatTimeInZone(date, timeZone) {
+  return new Intl.DateTimeFormat('zh-TW', { timeZone, hour: '2-digit', minute: '2-digit', hour12: false }).format(date);
+}
+
+function renderDualClock(containerId, citySlug) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const auZone = CITY_TIMEZONES[citySlug] || 'Australia/Sydney';
+  const auLabel = citySlug ? CITY_GUIDES[citySlug].name : '澳洲（雪梨時間）';
+
+  function tick() {
+    const now = new Date();
+    el.innerHTML = `
+      <div class="clock-item">
+        <span class="clock-label">🇹🇼 台灣</span>
+        <span class="clock-time">${formatTimeInZone(now, 'Asia/Taipei')}</span>
+      </div>
+      <div class="clock-item">
+        <span class="clock-label">🇦🇺 ${auLabel}</span>
+        <span class="clock-time">${formatTimeInZone(now, auZone)}</span>
+      </div>
+    `;
+  }
+  tick();
+  setInterval(tick, 30000);
+}
+
 function formatRelativeTime(ts) {
   if (!ts) return '未知';
   const diffMin = Math.round((Date.now() - ts) / 60000);
@@ -205,6 +241,8 @@ function renderIndexPage() {
   renderHeader('index.html');
 
   const today = findTodayDay();
+  renderDualClock('dual-clock', today ? today.citySlug : null);
+
   const bannerEl = document.getElementById('today-banner');
   if (today) {
     bannerEl.innerHTML = `
@@ -283,6 +321,8 @@ function renderDayPage() {
     <div class="ctx-date">${day.date}（${day.weekday}）</div>
     ${day.citySlug ? `<div class="ctx-wx" id="ctx-wx">天氣讀取中…</div><div class="wx-status" id="ctx-wx-status"></div>` : ''}
   `;
+
+  renderDualClock('dual-clock', day.citySlug);
 
   if (day.citySlug) {
     setupWeatherStatus('ctx-wx-status', (map) => {

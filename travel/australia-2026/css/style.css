@@ -338,6 +338,39 @@ main {
   outline-offset: 1px;
 }
 
+.dual-clock {
+  display: flex;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.dual-clock .clock-item {
+  flex: 1;
+  text-align: center;
+}
+
+.dual-clock .clock-item + .clock-item {
+  border-left: 1px solid var(--border);
+}
+
+.dual-clock .clock-label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.dual-clock .clock-time {
+  display: block;
+  font-size: 22px;
+  font-weight: 800;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
 .today-banner {
   background: linear-gradient(135deg, #16181d, #24272f);
   color: #fff;

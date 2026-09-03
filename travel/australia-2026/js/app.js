@@ -70,6 +70,21 @@ function setupWeatherStatus(statusElId, applyFn) {
   window.onTripDataRefreshed = load;
 }
 
+function dayCardHtml(d, badgeClass, isToday, hasIssue) {
+  return `
+    <a class="day-card ${isToday ? 'today' : ''}" href="day.html?d=${d.day}">
+      <div class="day-badge ${badgeClass}"><span>Day</span><span class="num">${d.day}</span></div>
+      <div class="day-body">
+        <div class="day-date">${d.date}（${d.weekday}）</div>
+        <div class="day-city">${d.city}</div>
+        ${hasIssue ? '<div class="day-issue">⚠ 這天有資料待確認</div>' : ''}
+      </div>
+      ${d.citySlug ? `<div class="day-wx" data-date="${d.date}">…</div>` : ''}
+      <div class="chevron">›</div>
+    </a>
+  `;
+}
+
 function mapLink(query) {
   if (!query) return '';
   const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
@@ -197,18 +212,7 @@ function renderIndexPage() {
     const cards = leg.days.map((d) => {
       const isToday = today && today.day === d.day;
       const hasIssue = OPEN_ISSUES.some((i) => i.day === d.day);
-      return `
-        <a class="day-card ${isToday ? 'today' : ''}" href="day.html?d=${d.day}">
-          <div class="day-badge ${badgeClass}"><span>Day</span><span class="num">${d.day}</span></div>
-          <div class="day-body">
-            <div class="day-date">${d.date}（${d.weekday}）</div>
-            <div class="day-city">${d.city}</div>
-            ${hasIssue ? '<div class="day-issue">⚠ 這天有資料待確認</div>' : ''}
-          </div>
-          ${d.citySlug ? `<div class="day-wx" data-date="${d.date}">…</div>` : ''}
-          <div class="chevron">›</div>
-        </a>
-      `;
+      return dayCardHtml(d, badgeClass, isToday, hasIssue);
     }).join('');
 
     return `
@@ -347,6 +351,26 @@ function renderCityPage() {
   }
   document.title = `${guide.name}｜城市指南｜澳洲旅遊手冊`;
   document.getElementById('city-title').innerHTML = `<span class="dot dot-${slug}"></span>${guide.name}`;
+
+  // 先找有沒有天數是「住宿/主要停留」在這個城市；像布里斯本這種當天來回、
+  // 沒有citySlug對應到它的情況，就退回用城市名稱比對(例如Day2的「布里斯本 → 黃金海岸」)
+  let cityDays = DAYS.filter((d) => d.citySlug === slug);
+  if (!cityDays.length) {
+    cityDays = DAYS.filter((d) => d.city.includes(guide.name));
+  }
+  const badgeClass = `badge-${slug}`;
+  const cityDaysEl = document.getElementById('city-days');
+  if (cityDaysEl) {
+    cityDaysEl.innerHTML = cityDays.length
+      ? cityDays.map((d) => dayCardHtml(d, badgeClass, false, OPEN_ISSUES.some((i) => i.day === d.day))).join('')
+      : '<p style="font-size:13px;color:var(--text-muted)">目前行程沒有安排在這裡過夜，只是路過而已</p>';
+
+    setupWeatherStatus('city-wx-status', (map) => {
+      cityDaysEl.querySelectorAll('.day-wx[data-date]').forEach((el) => {
+        el.innerHTML = renderWeatherChip(map[el.dataset.date]);
+      });
+    });
+  }
 
   const parts = [];
 

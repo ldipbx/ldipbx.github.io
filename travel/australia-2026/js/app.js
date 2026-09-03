@@ -81,18 +81,24 @@ function mapLink(query) {
 function renderHeader(active) {
   const el = document.getElementById('app-header');
   if (!el) return;
+  // 匯率換算是隨時可能會用到的工具，跟「看哪個城市行程」是不同性質的操作，
+  // 拉出捲動列表、改放固定不動的快捷按鈕，不管在哪一頁都不用滑動就能點到
   const tabs = [
     { href: 'index.html', label: '總覽' },
     { href: 'checklist.html', label: '行前準備' },
-    { href: 'currency.html', label: '匯率換算' },
     { href: 'city.html?c=brisbane', label: '布里斯本' },
     { href: 'city.html?c=goldcoast', label: '黃金海岸' },
     { href: 'city.html?c=sydney', label: '雪梨' },
     { href: 'city.html?c=melbourne', label: '墨爾本' },
   ];
   el.innerHTML = `
-    <h1>澳洲旅遊手冊</h1>
-    <div class="trip-range">${TRIP.start} ~ ${TRIP.end}｜${TRIP.travelers}人</div>
+    <div class="app-header-top">
+      <div>
+        <h1>澳洲旅遊手冊</h1>
+        <div class="trip-range">${TRIP.start} ~ ${TRIP.end}｜${TRIP.travelers}人</div>
+      </div>
+      <a href="currency.html" class="quick-currency ${active === 'currency.html' ? 'active' : ''}" title="匯率換算">💱</a>
+    </div>
     <nav class="nav-tabs">
       ${tabs.map((t) => `<a href="${t.href}" class="${t.href.startsWith(active) ? 'active' : ''}">${t.label}</a>`).join('')}
     </nav>

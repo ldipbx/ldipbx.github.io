@@ -111,6 +111,7 @@ function renderIndexPage() {
             <div class="day-city">${d.city}</div>
             ${hasIssue ? '<div class="day-issue">⚠ 這天有資料待確認</div>' : ''}
           </div>
+          ${d.citySlug ? `<div class="day-wx" data-date="${d.date}">…</div>` : ''}
           <div class="chevron">›</div>
         </a>
       `;
@@ -127,6 +128,12 @@ function renderIndexPage() {
       </div>
     `;
   }).join('');
+
+  WeatherStore.getAll().then((map) => {
+    document.querySelectorAll('.day-wx[data-date]').forEach((el) => {
+      el.innerHTML = renderWeatherChip(map[el.dataset.date]);
+    });
+  });
 }
 
 // ---- day.html ----
@@ -143,7 +150,17 @@ function renderDayPage() {
   document.getElementById('day-nav-top').innerHTML = `
     <div class="ctx-day">Day${day.day}・${day.city}</div>
     <div class="ctx-date">${day.date}（${day.weekday}）</div>
+    ${day.citySlug ? `<div class="ctx-wx" id="ctx-wx">天氣讀取中…</div>` : ''}
   `;
+
+  if (day.citySlug) {
+    WeatherStore.getAll().then((map) => {
+      const el = document.getElementById('ctx-wx');
+      if (!el) return;
+      const info = map[day.date];
+      el.innerHTML = info ? renderWeatherChip(info) : '目前查不到這天的天氣資料';
+    });
+  }
 
   document.getElementById('day-nav-bottom').innerHTML = `
     ${prev ? `<a href="day.html?d=${prev.day}">← Day${prev.day}</a>` : '<span class="disabled">← 第一天</span>'}
@@ -173,19 +190,21 @@ function renderDayPage() {
     notesEl.innerHTML = '';
   }
 
+  const durationLabel = (type) => (type === 'activity' || type === 'meal' ? '建議停留' : '預估時間');
+
   const timelineEl = document.getElementById('timeline');
   timelineEl.innerHTML = day.segments.map((s) => `
     <div class="segment">
       <div class="seg-rail">
-        <span class="seg-time">${s.time}</span>
         <span class="seg-dot dot-${s.status}"></span>
       </div>
       <div class="seg-content">
+        <div class="seg-time">${s.time}</div>
         <div class="seg-top">
           <span class="seg-title">${s.title}${s.flightNo ? `（${s.flightNo}）` : ''}</span>
           ${badge(s.status)}
         </div>
-        ${s.duration ? `<div class="seg-duration">預估時間：${s.duration}</div>` : ''}
+        ${s.duration ? `<div class="seg-duration">${durationLabel(s.type)}：${s.duration}</div>` : ''}
         ${s.howTo ? `<div class="seg-detail">🚌 ${s.howTo}</div>` : ''}
         ${s.warning ? `<div class="seg-warning">⚠ ${s.warning}</div>` : ''}
         ${s.alternatives && s.alternatives.length ? `<div class="seg-alt">備案：<ul>${s.alternatives.map((a) => `<li>${a}</li>`).join('')}</ul></div>` : ''}

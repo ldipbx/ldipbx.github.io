@@ -7,7 +7,7 @@ Troy Yan 的個人網站 repo（`ldipbx.github.io`），純靜態 HTML/CSS/JS，
 ```
 /                       個人首頁（目前是佔位頁）
 /travel/                旅遊區：列出所有行程
-/travel/australia-2026/ 2026/9/23–10/5 澳洲行動裝置友善旅遊手冊
+/travel/australia-2026/ 2026/9/24–10/5 澳洲行動裝置友善旅遊手冊
 ```
 
 之後如果有新行程，就在 `travel/` 底下新增一個資料夾（例如 `travel/japan-2027/`），再到 `travel/index.html` 加一張卡片連過去即可。

@@ -200,6 +200,30 @@ main {
   font-weight: 600;
 }
 
+.day-card .day-wx {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.day-card .day-wx .wx-icon {
+  font-size: 15px;
+  margin-right: 2px;
+}
+
+.day-card .day-wx .wx-temp {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.wx-tag {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
 .day-card .chevron {
   flex: 0 0 auto;
   color: #c9cdd4;
@@ -254,6 +278,29 @@ main {
   font-size: 13px;
   color: var(--text-muted);
   margin-top: 2px;
+}
+
+.day-context .ctx-wx {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.day-context .ctx-wx .wx-icon {
+  font-size: 18px;
+  margin-right: 4px;
+}
+
+.day-context .ctx-wx .wx-temp {
+  font-weight: 700;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.day-context .ctx-wx .wx-tag {
+  display: inline;
+  margin-left: 6px;
+  font-size: 11px;
 }
 
 .bottom-nav {
@@ -327,8 +374,8 @@ main {
 
 .segment {
   display: grid;
-  grid-template-columns: 52px 1fr;
-  gap: 10px;
+  grid-template-columns: 18px 1fr;
+  gap: 12px;
   position: relative;
   padding-bottom: 16px;
 }
@@ -337,36 +384,37 @@ main {
 
 .seg-rail {
   position: relative;
-  text-align: right;
-  padding-top: 3px;
-}
-
-.seg-rail .seg-time {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-muted);
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
 }
 
 .seg-rail .seg-dot {
-  position: absolute;
-  right: -15px;
-  top: 3px;
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   border: 2px solid #fff;
   box-shadow: 0 0 0 1px var(--border);
+  flex: 0 0 auto;
 }
 
 .segment:not(:last-child) .seg-rail::after {
   content: '';
   position: absolute;
-  right: -11px;
-  top: 16px;
+  top: 18px;
   bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 2px;
   background: var(--border);
+}
+
+.seg-content .seg-time {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+  letter-spacing: 0.01em;
 }
 
 .dot-confirmed { background: var(--confirmed); }

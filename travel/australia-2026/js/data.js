@@ -1,6 +1,7 @@
 // 澳洲旅遊手冊 - 行程資料
 // 資料整理自 00 raw data/澳洲.xlsx，並依實際機票日期(9/24晚上出發、10/4晚上回程)校正過。
 // 未提供的資訊一律用 status:'tbd' 標記，不自行編造。
+// 各活動的 duration(建議停留時間)為常見旅遊時間的概略估計，非Excel原始資料，僅供抓行程節奏參考。
 
 const TRIP = {
   start: '2026-09-24',
@@ -50,7 +51,8 @@ const DAYS = [
         alternatives: ['Con-x-ion 機場接駁巴士（約30~45分，可直達飯店，適合住非市中心）', 'Uber / 計程車（適合多人共乘，市中心停車費較高）'],
       },
       {
-        time: '傍晚前', type: 'activity', title: '布里斯本市區快閃觀光（時間有限，約2~3小時）', status: 'candidate',
+        time: '傍晚前', type: 'activity', title: '布里斯本市區快閃觀光', status: 'candidate',
+        duration: '時間有限，約2~3小時',
         howTo: '可參考「布里斯本」城市指南，建議挑1~2個離中央車站近的點（例如皇后街購物中心、市政廳），不用勉強逛滿',
         alternatives: ['搭了一整夜飛機比較累的話，可直接跳過市區、提早出發黃金海岸休息'],
       },
@@ -72,14 +74,15 @@ const DAYS = [
     segments: [
       {
         time: '上午', type: 'activity', title: '（可選）浮潛 / 划橡皮艇', status: 'candidate',
+        duration: '約半天（3~4小時）',
         howTo: '可透過 Klook 預訂', alternatives: ['若天候不佳可改為 Pacific Fair 逛街或海灘散步'],
       },
-      { time: '10:00', type: 'activity', title: '衝浪者天堂 Surfers Paradise', status: 'confirmed', howTo: '沙灘散步、拍照' },
-      { time: '15:00', type: 'activity', title: 'Pacific Fair Shopping Centre 逛街', status: 'confirmed' },
-      { time: '16:00', type: 'activity', title: 'Broadbeach 海灘 & Casino', status: 'confirmed' },
-      { time: '18:00', type: 'activity', title: 'Sky Point Q1大廈 看夜景', duration: '77樓高空景觀台', status: 'confirmed' },
+      { time: '10:00', type: 'activity', title: '衝浪者天堂 Surfers Paradise', status: 'confirmed', duration: '建議1~2小時', howTo: '沙灘散步、拍照' },
+      { time: '15:00', type: 'activity', title: 'Pacific Fair Shopping Centre 逛街', status: 'confirmed', duration: '建議1.5~2小時' },
+      { time: '16:00', type: 'activity', title: 'Broadbeach 海灘 & Casino', status: 'confirmed', duration: '建議1~1.5小時' },
+      { time: '18:00', type: 'activity', title: 'Sky Point Q1大廈 看夜景', duration: '建議1小時', howTo: '77樓高空景觀台', status: 'confirmed' },
       {
-        time: '晚餐', type: 'meal', title: 'Marios Italian Restaurant', status: 'confirmed',
+        time: '晚餐', type: 'meal', title: 'Marios Italian Restaurant', status: 'confirmed', duration: '約1~1.5小時',
         howTo: '好吃的義式餐廳，記得先預約', alternatives: ['Costa D’oro Italian Restaurant（鮮蝦飯好吃）'],
       },
     ],
@@ -90,8 +93,8 @@ const DAYS = [
     city: '黃金海岸', citySlug: 'goldcoast',
     accommodation: null,
     segments: [
-      { time: '上午', type: 'activity', title: '可倫賓動物園 Currumbin Wildlife Sanctuary', status: 'confirmed' },
-      { time: '下午', type: 'activity', title: 'Outlet 逛街', status: 'confirmed' },
+      { time: '上午', type: 'activity', title: '可倫賓動物園 Currumbin Wildlife Sanctuary', status: 'confirmed', duration: '建議2~3小時' },
+      { time: '下午', type: 'activity', title: 'Outlet 逛街', status: 'confirmed', duration: '建議2小時' },
     ],
     notes: [],
   },
@@ -110,11 +113,11 @@ const DAYS = [
         time: '（需自行抓時間）', type: 'transport', title: '退房、前往黃金海岸機場', status: 'tbd',
         warning: 'Excel 上沒有寫退房與前往機場的時間，12:20起飛前建議自己抓足夠的緩衝時間',
       },
-      { time: '12:20', type: 'flight', title: '捷星航空 飛雪梨', status: 'confirmed' },
+      { time: '12:20', type: 'flight', title: '捷星航空 飛雪梨', duration: '約1小時15分（估計，請以實際訂位為準）', status: 'confirmed' },
       { time: '抵達後', type: 'transport', title: '雪梨飯店 Check in', status: 'confirmed' },
-      { time: '14:00', type: 'activity', title: '岩石區 The Rocks', status: 'confirmed' },
-      { time: '16:00', type: 'activity', title: '逛環形碼頭，拍雪梨歌劇院', status: 'confirmed' },
-      { time: '18:00', type: 'activity', title: '雪梨歌劇院 + 雪梨港灣大橋', status: 'confirmed', howTo: '由北到南走約20分鐘，大橋入口在岩石區的 Argyle Stairs（爬樓梯）或 Bridge Stairs（樓梯/電梯）' },
+      { time: '14:00', type: 'activity', title: '岩石區 The Rocks', status: 'confirmed', duration: '建議1~1.5小時' },
+      { time: '16:00', type: 'activity', title: '逛環形碼頭，拍雪梨歌劇院', status: 'confirmed', duration: '建議1小時' },
+      { time: '18:00', type: 'activity', title: '雪梨歌劇院 + 雪梨港灣大橋', status: 'confirmed', duration: '建議1.5~2小時（含拍照）', howTo: '由北到南走約20分鐘，大橋入口在岩石區的 Argyle Stairs（爬樓梯）或 Bridge Stairs（樓梯/電梯）' },
     ],
     notes: [],
   },
@@ -178,12 +181,13 @@ const DAYS = [
       },
       {
         time: '全天（二選一）', type: 'activity', title: '菲利浦島一日遊 Phillip Island', status: 'candidate',
+        duration: '全天（含晚上企鵝歸巢）',
         howTo: '彩虹小屋沙灘 Brighton Beach、月光野生動物園、格蘭特岬角及諾比斯、企鵝歸巢（傍晚～晚上才開始，建議晚去晚回）',
         alternatives: ['與上方普芬比利小火車擇一，兩者都是全天行程無法同天完成'],
       },
       {
         time: '晚上（擇一）', type: 'meal', title: '晚餐：亞拉河 Yarra River 畔 / BangPop 泰式料理',
-        status: 'candidate', howTo: '兩個晚餐選項同時列在同一天，建議依當天行程結束地點就近選擇',
+        status: 'candidate', duration: '約1~1.5小時', howTo: '兩個晚餐選項同時列在同一天，建議依當天行程結束地點就近選擇',
         alternatives: ['河邊酒吧看夕陽'],
       },
     ],
@@ -209,10 +213,10 @@ const DAYS = [
     city: '墨爾本', citySlug: 'melbourne',
     accommodation: null,
     segments: [
-      { time: '09:00', type: 'activity', title: 'Coffee Laneway 咖啡街', status: 'confirmed' },
-      { time: '11:00', type: 'activity', title: 'State Library Victoria', status: 'confirmed', howTo: '很美的圖書館，10:00-18:00開放' },
-      { time: '13:00', type: 'activity', title: 'Brighton Beach 彩虹小屋沙灘', status: 'confirmed' },
-      { time: '15:00', type: 'activity', title: '搭車回市區逛街', status: 'confirmed' },
+      { time: '09:00', type: 'activity', title: 'Coffee Laneway 咖啡街', status: 'confirmed', duration: '建議1小時' },
+      { time: '11:00', type: 'activity', title: 'State Library Victoria', status: 'confirmed', duration: '建議1~1.5小時', howTo: '很美的圖書館，10:00-18:00開放' },
+      { time: '13:00', type: 'activity', title: 'Brighton Beach 彩虹小屋沙灘', status: 'confirmed', duration: '建議1小時' },
+      { time: '15:00', type: 'activity', title: '搭車回市區逛街', status: 'confirmed', duration: '建議1~2小時（依集合時間彈性調整）' },
       {
         time: '（需自行抓時間）', type: 'transport', title: '前往墨爾本機場', status: 'tbd',
         warning: '今天白天行程排到15:00後才回市區逛街，晚上21:50就要起飛，記得預留足夠時間退房、拿行李、到機場（墨爾本機場離市區車程約30-40分視路況）',

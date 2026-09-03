@@ -17,8 +17,8 @@ const DAYS = [
     accommodation: null,
     segments: [
       {
-        time: '23:30', type: 'flight', title: '桃園機場 T2 出發', flightNo: 'CI051',
-        duration: '約9小時15分（隔日抵達雪梨）', status: 'confirmed',
+        time: '23:30', type: 'flight', title: '桃園機場 T2 出發（直飛布里斯本）', flightNo: 'CI053',
+        duration: '約9小時5分（隔日9/25 10:35直達布里斯本，中途不停站）', status: 'confirmed',
         howTo: '國際線由桃園機場第二航廈出發，建議提前3小時到機場', alternatives: [],
         mapQuery: 'Taoyuan International Airport Terminal 2, Taiwan',
       },
@@ -36,28 +36,19 @@ const DAYS = [
       mapQuery: 'Golden Sands on the Beach, Gold Coast, Australia',
     },
     segments: [
-      { time: '10:45', type: 'flight', title: '抵達雪梨機場 T1（國際航廈）', flightNo: 'CI051', status: 'confirmed', mapQuery: 'Sydney Airport Terminal 1, Australia' },
+      { time: '10:35', type: 'flight', title: '抵達布里斯本機場（國際航廈）', flightNo: 'CI053', status: 'confirmed', mapQuery: 'Brisbane Airport, Australia' },
       {
-        time: '10:45–13:40', type: 'transport', title: '雪梨機場轉機（T1 → T3）',
-        duration: '約2小時55分', status: 'confirmed',
-        howTo: '入境、提領行李後，由 T1 搭機場接駁巴士到 T3 國內線航廈',
-        warning: '6人份行李 + 國際線入境排隊時間需留意，實際可運用時間可能比表定更緊，建議事先確認萬一delay要如何應變（例如與下一段航班客服確認可否改班）',
-        alternatives: [], mapQuery: 'Sydney Airport, Australia',
-      },
-      { time: '13:40', type: 'flight', title: '雪梨 T3 國內線出發', flightNo: 'QF532', duration: '約1小時35分', status: 'confirmed', mapQuery: 'Sydney Airport Terminal 3, Australia' },
-      { time: '15:15', type: 'flight', title: '抵達布里斯本機場（國內航廈）', status: 'confirmed', mapQuery: 'Brisbane Airport, Australia' },
-      {
-        time: '15:15之後', type: 'transport', title: '購買 Go Card，前往市區', duration: '機場快線約20分鐘到中央車站',
+        time: '10:35之後', type: 'transport', title: '入境、購買 Go Card，前往市區', duration: '機場快線約20分鐘到中央車站',
         status: 'confirmed',
         howTo: '機場三樓搭乘 Airtrain 機場快線，最快速方便，直達中央車站',
         alternatives: ['Con-x-ion 機場接駁巴士（約30~45分，可直達飯店，適合住非市中心）', 'Uber / 計程車（適合多人共乘，市中心停車費較高）'],
         mapQuery: 'Brisbane Central Station, Australia',
       },
       {
-        time: '傍晚前', type: 'activity', title: '布里斯本市區快閃觀光', status: 'candidate',
-        duration: '時間有限，約2~3小時',
-        howTo: '可參考「布里斯本」城市指南，建議挑1~2個離中央車站近的點（例如皇后街購物中心、市政廳），不用勉強逛滿',
-        alternatives: ['搭了一整夜飛機比較累的話，可直接跳過市區、提早出發黃金海岸休息'],
+        time: '白天', type: 'activity', title: '布里斯本市區觀光', status: 'confirmed',
+        duration: '約9~10小時（含午餐，直飛抵達當天時間很充足）',
+        howTo: '可參考「布里斯本」城市指南安排景點，例如市政廳、皇后街購物中心、南岸公園、故事橋等',
+        alternatives: ['搭了一整夜飛機如果比較累，也可以挑少一點景點、留時間休息'],
         mapQuery: 'Brisbane CBD, Australia',
       },
       {
@@ -67,8 +58,7 @@ const DAYS = [
       },
     ],
     notes: [
-      '因為實際航班是9/24晚上出發、9/25白天抵達，布里斯本改成不過夜，抵達當天傍晚就直接前往黃金海岸',
-      '這天等於是「一整夜飛機＋轉機＋長途移動」疊在一起，對6人來說會是體力最吃緊的一天，行程排鬆一點比較好',
+      '直飛布里斯本，中途不經雪梨轉機，9/25上午10:35抵達；布里斯本改成不過夜，晚上直接前往黃金海岸',
     ],
   },
   {
@@ -368,7 +358,6 @@ const CHECKLIST = [
   { item: '確認雪梨 → 墨爾本交通', detail: 'Day8（10/1）目前完全沒有安排，建議盡快訂國內線機票' },
   { item: '確認雪梨 Meriton Suites 房型', detail: '訂房參數顯示 adults=6/rooms=1，需跟訂房網站或飯店再次確認房間是否住得下6人' },
   { item: '決定 Day9 墨爾本行程', detail: '普芬比利小火車 / 菲利浦島企鵝歸巢，兩者皆全天行程，需擇一' },
-  { item: '確認 Day2 雪梨轉機＋布里斯本快閃動線', detail: '國際線10:45落地、國內線13:40起飛，中間2小時55分含入境+提領行李+航廈接駁；布里斯本改成不過夜，當晚還要再移動到黃金海岸，建議留意6人的體力安排' },
   { item: '確認 Day5 黃金海岸退房→機場銜接時間', detail: '12:20的捷星航班，退房與到機場的時間目前沒有明確安排' },
   { item: '確認 Day11 墨爾本返程銜接時間', detail: '21:50起飛，白天行程排到15:00才回市區，記得預留退房、拿行李、到機場的時間' },
   { item: '準備各城市交通卡儲值金', detail: 'Go Card（布里斯本/黃金海岸）、Opal Card（雪梨）、Myki Card（墨爾本）' },

@@ -122,11 +122,25 @@ async function fetchCityWeather(slug, dates) {
   return result;
 }
 
+// 天氣快取6小時：同一天內在首頁/各Day頁之間切換只會真的打一次API，
+// 其餘都直接讀快取，避免每次點開行程就重新抓一次天氣。
+const WEATHER_CACHE_KEY = 'au_trip_weather_cache_v1';
+const WEATHER_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+
 const WeatherStore = {
   _promise: null,
   getAll() {
     if (this._promise) return this._promise;
     this._promise = (async () => {
+      try {
+        const cached = JSON.parse(localStorage.getItem(WEATHER_CACHE_KEY));
+        if (cached && Date.now() - cached.fetchedAt < WEATHER_CACHE_TTL_MS) {
+          return cached.map;
+        }
+      } catch (e) {
+        // 沒有快取或快取壞掉，往下重新抓
+      }
+
       const byCity = {};
       DAYS.forEach((d) => {
         if (!d.citySlug) return;
@@ -135,7 +149,15 @@ const WeatherStore = {
       const entries = await Promise.all(
         Object.keys(byCity).map((slug) => fetchCityWeather(slug, byCity[slug])),
       );
-      return Object.assign({}, ...entries);
+      const map = Object.assign({}, ...entries);
+
+      try {
+        localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({ map, fetchedAt: Date.now() }));
+      } catch (e) {
+        // 存不進去（例如無痕模式）就算了，不影響這次畫面顯示
+      }
+
+      return map;
     })();
     return this._promise;
   },

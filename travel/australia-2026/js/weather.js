@@ -129,37 +129,53 @@ const WEATHER_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 
 const WeatherStore = {
   _promise: null,
+  _fetchedAt: null,
+
+  async _fetchFresh() {
+    const byCity = {};
+    DAYS.forEach((d) => {
+      if (!d.citySlug) return;
+      (byCity[d.citySlug] = byCity[d.citySlug] || []).push(d.date);
+    });
+    const entries = await Promise.all(
+      Object.keys(byCity).map((slug) => fetchCityWeather(slug, byCity[slug])),
+    );
+    const map = Object.assign({}, ...entries);
+    const fetchedAt = Date.now();
+    try {
+      localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({ map, fetchedAt }));
+    } catch (e) {
+      // 存不進去（例如無痕模式）就算了，不影響這次畫面顯示
+    }
+    this._fetchedAt = fetchedAt;
+    return map;
+  },
+
   getAll() {
     if (this._promise) return this._promise;
     this._promise = (async () => {
       try {
         const cached = JSON.parse(localStorage.getItem(WEATHER_CACHE_KEY));
         if (cached && Date.now() - cached.fetchedAt < WEATHER_CACHE_TTL_MS) {
+          this._fetchedAt = cached.fetchedAt;
           return cached.map;
         }
       } catch (e) {
         // 沒有快取或快取壞掉，往下重新抓
       }
-
-      const byCity = {};
-      DAYS.forEach((d) => {
-        if (!d.citySlug) return;
-        (byCity[d.citySlug] = byCity[d.citySlug] || []).push(d.date);
-      });
-      const entries = await Promise.all(
-        Object.keys(byCity).map((slug) => fetchCityWeather(slug, byCity[slug])),
-      );
-      const map = Object.assign({}, ...entries);
-
-      try {
-        localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({ map, fetchedAt: Date.now() }));
-      } catch (e) {
-        // 存不進去（例如無痕模式）就算了，不影響這次畫面顯示
-      }
-
-      return map;
+      return this._fetchFresh();
     })();
     return this._promise;
+  },
+
+  // 強制略過快取重新抓一次，給「重新整理」按鈕用
+  refresh() {
+    this._promise = this._fetchFresh();
+    return this._promise;
+  },
+
+  getFetchedAt() {
+    return this._fetchedAt;
   },
 };
 

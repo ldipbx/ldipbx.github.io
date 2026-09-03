@@ -42,6 +42,36 @@ function badge(status) {
   return `<span class="badge ${status}">${label}</span>`;
 }
 
+function formatRelativeTime(ts) {
+  if (!ts) return '未知';
+  const diffMin = Math.round((Date.now() - ts) / 60000);
+  if (diffMin < 1) return '剛剛';
+  if (diffMin < 60) return `${diffMin}分鐘前`;
+  return `${Math.round(diffMin / 60)}小時前`;
+}
+
+// 掛上「上次更新：X · 重新整理」的控制列，applyFn(map) 負責把資料畫面上去
+function setupWeatherRefresh(statusElId, applyFn) {
+  const statusEl = document.getElementById(statusElId);
+  if (!statusEl) return;
+
+  function renderStatus() {
+    statusEl.innerHTML = `<span class="wx-status-text">天氣更新於 ${formatRelativeTime(WeatherStore.getFetchedAt())}</span><button type="button" class="refresh-btn">🔄 重新整理</button>`;
+    statusEl.querySelector('.refresh-btn').addEventListener('click', () => {
+      statusEl.innerHTML = '<span class="wx-status-text">重新整理中…</span>';
+      WeatherStore.refresh().then((map) => {
+        applyFn(map);
+        renderStatus();
+      });
+    });
+  }
+
+  WeatherStore.getAll().then((map) => {
+    applyFn(map);
+    renderStatus();
+  });
+}
+
 function mapLink(query) {
   if (!query) return '';
   const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
@@ -150,7 +180,7 @@ function renderIndexPage() {
     `;
   }).join('');
 
-  WeatherStore.getAll().then((map) => {
+  setupWeatherRefresh('wx-status', (map) => {
     document.querySelectorAll('.day-wx[data-date]').forEach((el) => {
       el.innerHTML = renderWeatherChip(map[el.dataset.date]);
     });
@@ -171,11 +201,11 @@ function renderDayPage() {
   document.getElementById('day-nav-top').innerHTML = `
     <div class="ctx-day">Day${day.day}・${day.city}</div>
     <div class="ctx-date">${day.date}（${day.weekday}）</div>
-    ${day.citySlug ? `<div class="ctx-wx" id="ctx-wx">天氣讀取中…</div>` : ''}
+    ${day.citySlug ? `<div class="ctx-wx" id="ctx-wx">天氣讀取中…</div><div class="wx-status" id="ctx-wx-status"></div>` : ''}
   `;
 
   if (day.citySlug) {
-    WeatherStore.getAll().then((map) => {
+    setupWeatherRefresh('ctx-wx-status', (map) => {
       const el = document.getElementById('ctx-wx');
       if (!el) return;
       const info = map[day.date];
@@ -341,25 +371,38 @@ function renderCurrencyPage() {
   const twdInput = document.getElementById('twd-input');
   const rateInfoEl = document.getElementById('rate-info');
 
-  getAudToTwdRate().then((info) => {
-    if (!info) {
-      rateInfoEl.textContent = '目前抓不到匯率資料，且沒有先前的快取，請確認網路連線';
-      return;
-    }
-    const { rate } = info;
-    const updated = new Date(info.updatedAt);
-    const updatedText = Number.isNaN(updated.getTime()) ? info.updatedAt : updated.toLocaleString('zh-TW');
-    rateInfoEl.innerHTML = `1 AUD ≈ ${rate.toFixed(2)} TWD${info.stale ? '<span class="rate-stale">（離線快取，非即時）</span>' : ''}<div class="rate-updated">匯率更新時間：${updatedText}</div>`;
-
-    audInput.addEventListener('input', () => {
+  function bindInputs(rate) {
+    audInput.oninput = () => {
       const v = parseFloat(audInput.value);
       twdInput.value = Number.isNaN(v) ? '' : Math.round(v * rate);
-    });
-    twdInput.addEventListener('input', () => {
+    };
+    twdInput.oninput = () => {
       const v = parseFloat(twdInput.value);
       audInput.value = Number.isNaN(v) ? '' : (v / rate).toFixed(2);
+    };
+  }
+
+  function load(forceRefresh) {
+    rateInfoEl.innerHTML = forceRefresh ? '重新整理中…' : '匯率讀取中…';
+    getAudToTwdRate(forceRefresh).then((info) => {
+      if (!info) {
+        rateInfoEl.textContent = '目前抓不到匯率資料，且沒有先前的快取，請確認網路連線';
+        return;
+      }
+      const { rate } = info;
+      const updated = new Date(info.updatedAt);
+      const updatedText = Number.isNaN(updated.getTime()) ? info.updatedAt : updated.toLocaleString('zh-TW');
+      rateInfoEl.innerHTML = `
+        1 AUD ≈ ${rate.toFixed(2)} TWD${info.stale ? '<span class="rate-stale">（離線快取，非即時）</span>' : ''}
+        <div class="rate-updated">匯率更新時間：${updatedText}</div>
+        <button type="button" class="refresh-btn" id="rate-refresh-btn">🔄 重新整理</button>
+      `;
+      document.getElementById('rate-refresh-btn').addEventListener('click', () => load(true));
+      bindInputs(rate);
     });
-  });
+  }
+
+  load(false);
 }
 
 // ---- checklist.html ----

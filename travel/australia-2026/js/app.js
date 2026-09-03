@@ -313,6 +313,18 @@ function renderDayPage() {
 
   document.title = `Day${day.day}｜${day.city}｜澳洲旅遊手冊`;
 
+  // 快速跳到指定天數用，不用再一天一天點 prev/next
+  const pickerEl = document.getElementById('day-picker');
+  if (pickerEl) {
+    pickerEl.innerHTML = DAYS.map((d) => {
+      const badgeClass = d.citySlug ? `badge-${d.citySlug}` : 'badge-neutral';
+      const isActive = d.day === day.day;
+      return `<a href="day.html?d=${d.day}" class="day-pill ${badgeClass} ${isActive ? 'active' : ''}">${d.day}</a>`;
+    }).join('');
+    const activePill = pickerEl.querySelector('.day-pill.active');
+    if (activePill) activePill.scrollIntoView({ inline: 'center', block: 'nearest' });
+  }
+
   const prev = DAYS.find((d) => d.day === day.day - 1);
   const next = DAYS.find((d) => d.day === day.day + 1);
 

@@ -72,10 +72,26 @@ const DAYS = [
         duration: '約半天（3~4小時）',
         howTo: '可透過 Klook 預訂', alternatives: ['若天候不佳可改為 Pacific Fair 逛街或海灘散步'],
       },
-      { time: '10:00', type: 'activity', title: '衝浪者天堂 Surfers Paradise', status: 'confirmed', duration: '建議1~2小時', howTo: '沙灘散步、拍照', mapQuery: 'Surfers Paradise, Gold Coast, Australia' },
-      { time: '15:00', type: 'activity', title: 'Pacific Fair Shopping Centre 逛街', status: 'confirmed', duration: '建議1.5~2小時', mapQuery: 'Pacific Fair Shopping Centre, Gold Coast, Australia' },
-      { time: '16:00', type: 'activity', title: 'Broadbeach 海灘 & Casino', status: 'confirmed', duration: '建議1~1.5小時', mapQuery: 'Broadbeach, Gold Coast, Australia' },
-      { time: '18:00', type: 'activity', title: 'Sky Point Q1大廈 看夜景', duration: '建議1小時', howTo: '77樓高空景觀台', status: 'confirmed', mapQuery: 'SkyPoint Observation Deck, Gold Coast, Australia' },
+      {
+        time: '10:00', type: 'activity', title: '衝浪者天堂 Surfers Paradise', status: 'confirmed', duration: '建議1~2小時',
+        desc: '黃金海岸最知名的海灘與商圈，綿延數公里的金黃沙灘搭配高樓天際線，是黃金海岸的門面地標，沿海濱有步道，週三五日下午還有濱海市場。',
+        howTo: '沙灘散步、拍照', mapQuery: 'Surfers Paradise, Gold Coast, Australia',
+      },
+      {
+        time: '15:00', type: 'activity', title: 'Pacific Fair Shopping Centre 逛街', status: 'confirmed', duration: '建議1.5~2小時',
+        desc: '黃金海岸最大型的購物中心之一，超過300間店鋪，有Myer、David Jones等百貨公司跟眾多國際品牌。',
+        mapQuery: 'Pacific Fair Shopping Centre, Gold Coast, Australia',
+      },
+      {
+        time: '16:00', type: 'activity', title: 'Broadbeach 海灘 & Casino', status: 'confirmed', duration: '建議1~1.5小時',
+        desc: '比衝浪者天堂更悠閒的海灘區，The Star Gold Coast賭場也在這裡，沿岸餐廳酒吧林立，晚上氣氛不錯。',
+        mapQuery: 'Broadbeach, Gold Coast, Australia',
+      },
+      {
+        time: '18:00', type: 'activity', title: 'Sky Point Q1大廈 看夜景', duration: '建議1小時',
+        desc: 'Q1大廈啟用時曾是南半球最高的住宅大樓，77樓的SkyPoint觀景台可360度俯瞰整個黃金海岸海岸線，天氣好時視野能遠眺布里斯本方向。',
+        howTo: '77樓高空景觀台', status: 'confirmed', mapQuery: 'SkyPoint Observation Deck, Gold Coast, Australia',
+      },
       {
         time: '晚餐', type: 'meal', title: 'Marios Italian Restaurant', status: 'confirmed', duration: '約1~1.5小時',
         howTo: '好吃的義式餐廳，記得先預約', alternatives: ['Costa D’oro Italian Restaurant（鮮蝦飯好吃）'],
@@ -89,8 +105,16 @@ const DAYS = [
     city: '黃金海岸', citySlug: 'goldcoast',
     accommodation: null,
     segments: [
-      { time: '上午', type: 'activity', title: '可倫賓動物園 Currumbin Wildlife Sanctuary', status: 'confirmed', duration: '建議2~3小時', mapQuery: 'Currumbin Wildlife Sanctuary, Australia' },
-      { time: '下午', type: 'activity', title: 'Outlet 逛街', status: 'confirmed', duration: '建議2小時', mapQuery: 'Harbour Town Premium Outlets, Gold Coast, Australia' },
+      {
+        time: '上午', type: 'activity', title: '可倫賓動物園 Currumbin Wildlife Sanctuary', status: 'confirmed', duration: '建議2~3小時',
+        desc: '1947年開園的野生動物保護區，以能近距離餵食野生彩虹吸蜜鸚鵡聞名，園內也有無尾熊互動、袋鼠放養區等體驗行程。',
+        mapQuery: 'Currumbin Wildlife Sanctuary, Australia',
+      },
+      {
+        time: '下午', type: 'activity', title: 'Outlet 逛街', status: 'confirmed', duration: '建議2小時',
+        desc: 'Harbour Town是黃金海岸最大的Outlet暢貨中心，聚集上百個國際品牌折扣店，價格通常比市價便宜不少。',
+        mapQuery: 'Harbour Town Premium Outlets, Gold Coast, Australia',
+      },
     ],
     notes: [],
   },
@@ -140,6 +164,7 @@ const DAYS = [
       {
         time: '全天', type: 'activity', title: '藍山國家公園一日遊 Blue Mountains', status: 'confirmed',
         duration: '搭火車約2小時，或報名一日遊行程',
+        desc: '因山谷間大片尤加利樹釋放的油氣在陽光下散射出藍色薄霧而得名，1994年被列入世界自然遺產，是雪梨近郊最受歡迎的一日遊景點。',
         howTo: '主要4個景點可搭纜車俯瞰全景：景觀世界(Scenic World)、回音谷(Echo Point)、巨人階梯(Giant Stairway)、三姊妹岩(Three Sisters)',
         alternatives: [], mapQuery: 'Blue Mountains National Park, Australia',
       },
@@ -153,6 +178,7 @@ const DAYS = [
     segments: [
       {
         time: '全天', type: 'activity', title: '賞鯨（史蒂芬港出發）', status: 'confirmed',
+        desc: '史蒂芬港是雪梨北邊熱門的賞鯨基地，9月正值座頭鯨沿東岸南返南極洲的季節，海況允許時很有機會看到鯨魚躍出水面。訂票時可以留意船家有沒有「當天看不到鯨魚可免費再出船一次」的保障。',
         warning: '史蒂芬港距離雪梨市區車程約2.5~3小時，來回幾乎是一整天的行程，隔天(Day8)還要前往墨爾本，請確認團體/包車的實際返回時間，避免太晚回到市區影響隔天行程與收拾行李',
         alternatives: ['天候不佳無法出海時，可改為市區內行程（雪梨塔、達令港、海德公園等）'],
         mapQuery: 'Port Stephens, Australia',
@@ -187,6 +213,7 @@ const DAYS = [
     segments: [
       {
         time: '全天（二選一）', type: 'activity', title: '普芬比利蒸汽火車一日遊 Puffing Billy', status: 'candidate',
+        desc: '1900年通車的觀光蒸汽火車，行駛於丹頓農山脈的原始林間，是全世界少數仍保存完整運行的窄軌蒸汽鐵路之一，經典畫面是乘客坐在車廂邊緣把腳伸出窗外拍照。',
         howTo: '貝爾格雷夫站（Belgrave）至湖濱車站（Lakeside），需事先訂票，位子建議選前面，不然中間會拍到別人的手',
         duration: '半天～全天，中午可在 Lakeside 站吃午餐',
         alternatives: ['與下方菲利浦島擇一，兩者都是全天行程無法同天完成'],
@@ -194,6 +221,7 @@ const DAYS = [
       },
       {
         time: '全天（二選一）', type: 'activity', title: '菲利浦島一日遊 Phillip Island', status: 'candidate',
+        desc: '招牌行程是每天傍晚成群野生小企鵝(Little Penguins，世界最小的企鵝品種)集體上岸歸巢的「企鵝歸巢」(Penguin Parade)，島上還有無尾熊保護區跟賽車場。',
         duration: '全天（含晚上企鵝歸巢）',
         howTo: '彩虹小屋沙灘 Brighton Beach、月光野生動物園、格蘭特岬角及諾比斯、企鵝歸巢（傍晚～晚上才開始，建議晚去晚回）',
         alternatives: ['與上方普芬比利小火車擇一，兩者都是全天行程無法同天完成'],
@@ -201,7 +229,9 @@ const DAYS = [
       },
       {
         time: '晚上（擇一）', type: 'meal', title: '晚餐：亞拉河 Yarra River 畔 / BangPop 泰式料理',
-        status: 'candidate', duration: '約1~1.5小時', howTo: '兩個晚餐選項同時列在同一天，建議依當天行程結束地點就近選擇',
+        status: 'candidate', duration: '約1~1.5小時',
+        desc: '亞拉河畔沿岸有許多餐廳酒吧，適合邊看夜景邊用餐；BangPop則是墨爾本評價很高的創意泰式料理，兩者風格不同，可依當天行程結束的地點就近選擇。',
+        howTo: '兩個晚餐選項同時列在同一天，建議依當天行程結束地點就近選擇',
         alternatives: ['河邊酒吧看夕陽'],
       },
     ],
@@ -214,6 +244,7 @@ const DAYS = [
     segments: [
       {
         time: '全天', type: 'activity', title: '大洋路一日遊 Great Ocean Road', status: 'confirmed',
+        desc: '全長約240公里的濱海公路，沿途經過衝浪勝地、雨林步道，終點的十二使徒岩是石灰岩海崖經上萬年海浪侵蝕後留下的獨立岩柱群，因持續侵蝕目前僅剩約8座，是大洋路最具代表性的地標。',
         howTo: '起點 Memorial Arch（可停留5分鐘拍照，旁邊有小沙灘）→ Great Otway 國家公園 → 坎貝爾港國家公園 Twelve Apostles 十二使徒岩（風很大）→ Maits Rest Rainforest Walk（約停留30-45分）→ 阿德湖峽',
         alternatives: [], mapQuery: 'Great Ocean Road, Australia',
       },

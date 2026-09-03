@@ -23,9 +23,29 @@ function findTodayDay() {
   return DAYS.find((d) => d.date === t) || null;
 }
 
+// 把行程裡的時間字串換算成當天的分鐘數，抓不到明確時間的（上午/傍晚/途中/抵達後...）
+// 就用常見的時段對應，或沿用前一個項目的時間，讓「現在進行到哪」的判斷有個合理依據。
+function parseSegmentMinutes(timeStr, fallback) {
+  const m = timeStr.match(/(\d{1,2}):(\d{2})/);
+  if (m) return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
+  const keywords = [
+    ['凌晨', 3 * 60], ['早上', 8 * 60], ['上午', 9 * 60], ['中午', 12 * 60],
+    ['午餐', 12 * 60], ['下午', 14 * 60], ['傍晚', 17 * 60], ['晚餐', 19 * 60],
+    ['晚上', 19 * 60], ['深夜', 23 * 60],
+  ];
+  const hit = keywords.find(([kw]) => timeStr.includes(kw));
+  return hit ? hit[1] : fallback;
+}
+
 function badge(status) {
   const label = STATUS_LABEL[status] || status;
   return `<span class="badge ${status}">${label}</span>`;
+}
+
+function mapLink(query) {
+  if (!query) return '';
+  const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  return `<a class="map-link" href="${url}" target="_blank" rel="noopener">📍 在地圖上查看</a>`;
 }
 
 function renderHeader(active) {
@@ -34,6 +54,7 @@ function renderHeader(active) {
   const tabs = [
     { href: 'index.html', label: '總覽' },
     { href: 'checklist.html', label: '行前準備' },
+    { href: 'currency.html', label: '匯率換算' },
     { href: 'city.html?c=brisbane', label: '布里斯本' },
     { href: 'city.html?c=goldcoast', label: '黃金海岸' },
     { href: 'city.html?c=sydney', label: '雪梨' },
@@ -176,7 +197,10 @@ function renderDayPage() {
         <h3>${a.name}</h3>
         <div class="meta">入住 ${a.checkin} → 退房 ${a.checkout}（共${a.nights}晚）${a.rooms ? `｜${a.rooms}` : ''}</div>
         ${a.note ? `<div class="note">⚠ ${a.note}</div>` : ''}
-        ${a.bookingUrl ? `<a class="booking-link" href="${a.bookingUrl}" target="_blank" rel="noopener">訂房連結 →</a>` : ''}
+        <div class="acc-links">
+          ${a.bookingUrl ? `<a class="booking-link" href="${a.bookingUrl}" target="_blank" rel="noopener">訂房連結 →</a>` : ''}
+          ${mapLink(a.mapQuery)}
+        </div>
       </div>
     `;
   } else {
@@ -192,14 +216,30 @@ function renderDayPage() {
 
   const durationLabel = (type) => (type === 'activity' || type === 'meal' ? '建議停留' : '預估時間');
 
+  // 只有在瀏覽「今天」這一頁時才需要標出目前進行到哪個項目
+  const isToday = day.date === todayStr();
+  let currentIdx = -1;
+  let nowMinutes = -1;
+  let last = 0;
+  const minutesList = day.segments.map((s) => (last = parseSegmentMinutes(s.time, last)));
+  if (isToday) {
+    const now = new Date();
+    nowMinutes = now.getHours() * 60 + now.getMinutes();
+    minutesList.forEach((mins, i) => { if (mins <= nowMinutes) currentIdx = i; });
+    if (currentIdx === -1) currentIdx = 0; // 今天但還沒到第一個項目的時間，標出「接下來」
+  }
+
   const timelineEl = document.getElementById('timeline');
-  timelineEl.innerHTML = day.segments.map((s) => `
-    <div class="segment">
+  timelineEl.innerHTML = day.segments.map((s, i) => {
+    const isCurrent = i === currentIdx;
+    const nowLabel = isCurrent ? (nowMinutes >= minutesList[i] ? '現在' : '接下來') : '';
+    return `
+    <div class="segment ${isCurrent ? 'is-current' : ''}">
       <div class="seg-rail">
         <span class="seg-dot dot-${s.status}"></span>
       </div>
       <div class="seg-content">
-        <div class="seg-time">${s.time}</div>
+        <div class="seg-time">${s.time}${nowLabel ? `<span class="now-badge">● ${nowLabel}</span>` : ''}</div>
         <div class="seg-top">
           <span class="seg-title">${s.title}${s.flightNo ? `（${s.flightNo}）` : ''}</span>
           ${badge(s.status)}
@@ -208,9 +248,19 @@ function renderDayPage() {
         ${s.howTo ? `<div class="seg-detail">🚌 ${s.howTo}</div>` : ''}
         ${s.warning ? `<div class="seg-warning">⚠ ${s.warning}</div>` : ''}
         ${s.alternatives && s.alternatives.length ? `<div class="seg-alt">備案：<ul>${s.alternatives.map((a) => `<li>${a}</li>`).join('')}</ul></div>` : ''}
+        ${s.mapQuery ? `<div class="seg-map">${mapLink(s.mapQuery)}</div>` : ''}
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
+
+  if (isToday) {
+    const els = timelineEl.querySelectorAll('.segment');
+    const target = els[currentIdx];
+    if (target) {
+      requestAnimationFrame(() => target.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+    }
+  }
 }
 
 // ---- city.html ----
@@ -281,6 +331,35 @@ function renderCityPage() {
   document.getElementById('city-switch').innerHTML = otherCities.map((s) => `
     <a class="city-tile tile-${s}" href="city.html?c=${s}">${CITY_GUIDES[s].name}</a>
   `).join('');
+}
+
+// ---- currency.html ----
+function renderCurrencyPage() {
+  renderHeader('currency.html');
+
+  const audInput = document.getElementById('aud-input');
+  const twdInput = document.getElementById('twd-input');
+  const rateInfoEl = document.getElementById('rate-info');
+
+  getAudToTwdRate().then((info) => {
+    if (!info) {
+      rateInfoEl.textContent = '目前抓不到匯率資料，且沒有先前的快取，請確認網路連線';
+      return;
+    }
+    const { rate } = info;
+    const updated = new Date(info.updatedAt);
+    const updatedText = Number.isNaN(updated.getTime()) ? info.updatedAt : updated.toLocaleString('zh-TW');
+    rateInfoEl.innerHTML = `1 AUD ≈ ${rate.toFixed(2)} TWD${info.stale ? '<span class="rate-stale">（離線快取，非即時）</span>' : ''}<div class="rate-updated">匯率更新時間：${updatedText}</div>`;
+
+    audInput.addEventListener('input', () => {
+      const v = parseFloat(audInput.value);
+      twdInput.value = Number.isNaN(v) ? '' : Math.round(v * rate);
+    });
+    twdInput.addEventListener('input', () => {
+      const v = parseFloat(twdInput.value);
+      audInput.value = Number.isNaN(v) ? '' : (v / rate).toFixed(2);
+    });
+  });
 }
 
 // ---- checklist.html ----

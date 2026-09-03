@@ -359,12 +359,27 @@ main {
   color: var(--tbd);
 }
 
-.accommodation-card .booking-link {
-  display: inline-block;
+.accommodation-card .acc-links {
+  display: flex;
+  gap: 14px;
   margin-top: 8px;
+}
+
+.accommodation-card .booking-link {
   font-size: 13px;
   font-weight: 600;
   text-decoration: underline;
+}
+
+.map-link {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brisbane);
+}
+
+.seg-content .seg-map {
+  margin-top: 6px;
 }
 
 /* ---- timeline ---- */
@@ -415,6 +430,23 @@ main {
   color: var(--text);
   margin-bottom: 4px;
   letter-spacing: 0.01em;
+}
+
+.segment.is-current .seg-content {
+  border-color: var(--text);
+  box-shadow: 0 0 0 2px var(--text), var(--shadow);
+}
+
+.now-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  background: var(--text);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 8px;
+  vertical-align: middle;
 }
 
 .dot-confirmed { background: var(--confirmed); }
@@ -571,6 +603,77 @@ main {
 .attraction .name { font-weight: 600; font-size: 14px; }
 .attraction .howto { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 .attraction .desc { font-size: 13px; margin-top: 4px; }
+
+/* ---- currency.html ---- */
+.converter-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+}
+
+.converter-field {
+  display: block;
+}
+
+.converter-field span {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.converter-field input {
+  width: 100%;
+  font-size: 24px;
+  font-weight: 700;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.converter-field input:focus {
+  outline: 2px solid var(--text);
+  outline-offset: 1px;
+}
+
+.converter-icon {
+  text-align: center;
+  font-size: 20px;
+  color: var(--text-muted);
+  margin: 10px 0;
+}
+
+.rate-info {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.rate-info .rate-updated {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.rate-info .rate-stale {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--tbd);
+}
+
+.hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
 
 /* ---- checklist.html ---- */
 .checklist-item {

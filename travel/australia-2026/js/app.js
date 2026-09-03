@@ -295,8 +295,8 @@ function renderDayPage() {
 
 // ---- city.html ----
 function renderCityPage() {
-  renderHeader('city.html');
   const slug = qs('c') || 'brisbane';
+  renderHeader(`city.html?c=${slug}`);
   const guide = CITY_GUIDES[slug];
   if (!guide) {
     document.getElementById('city-content').innerHTML = '<p>找不到這個城市的資料</p>';

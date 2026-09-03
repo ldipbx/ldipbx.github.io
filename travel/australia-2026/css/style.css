@@ -84,8 +84,8 @@ a:active, .day-card:active, .trip-card:active {
   flex: 0 0 auto;
   width: 46px;
   height: 46px;
-  border-radius: 12px;
-  background: transparent;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12);
   border: none;
   display: flex;
   flex-direction: column;
@@ -106,17 +106,11 @@ a:active, .day-card:active, .trip-card:active {
 .icon-btn .icon-label {
   font-size: 9px;
   font-weight: 700;
-  color: #fff;
-  opacity: 0.85;
 }
 
-.icon-btn:active {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.icon-btn.active .icon-label {
-  color: #8fc1ff;
-  opacity: 1;
+.icon-btn.active {
+  background: #fff;
+  color: var(--text);
 }
 
 @keyframes icon-spin {

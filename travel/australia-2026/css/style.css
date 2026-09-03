@@ -744,6 +744,7 @@ main {
 .attraction .name { font-weight: 600; font-size: 14px; }
 .attraction .howto { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 .attraction .desc { font-size: 13px; margin-top: 4px; }
+.attraction .attraction-map { margin-top: 6px; }
 
 /* ---- currency.html ---- */
 .converter-card {

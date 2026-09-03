@@ -471,6 +471,7 @@ function renderCityPage() {
             <div class="name">${a.name}</div>
             ${a.howTo ? `<div class="howto">🚌 ${a.howTo}</div>` : ''}
             ${a.desc ? `<div class="desc">${a.desc}</div>` : ''}
+            ${a.mapQuery ? `<div class="attraction-map">${mapLink(a.mapQuery)}</div>` : ''}
           </div>
         `).join('')}
       </div>
@@ -481,7 +482,7 @@ function renderCityPage() {
     parts.push(`
       <div class="guide-section">
         <h2>吃的</h2>
-        ${guide.food.map((f) => `<div class="attraction"><div class="name">${f.name}</div>${f.detail ? `<div class="desc">${f.detail}</div>` : ''}</div>`).join('')}
+        ${guide.food.map((f) => `<div class="attraction"><div class="name">${f.name}</div>${f.detail ? `<div class="desc">${f.detail}</div>` : ''}${f.mapQuery ? `<div class="attraction-map">${mapLink(f.mapQuery)}</div>` : ''}</div>`).join('')}
       </div>
     `);
   }

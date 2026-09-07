@@ -27,6 +27,20 @@
 
   <div class="rate-info" id="rate-info">匯率讀取中…</div>
   <p class="hint">僅供購物時快速估算參考，實際刷卡/現場換匯匯率會略有不同</p>
+
+  <h2 class="section-title">分帳小工具</h2>
+  <div class="converter-card">
+    <label class="converter-field">
+      <span>帳單總額 (AUD)</span>
+      <input type="number" id="split-total" inputmode="decimal" placeholder="0" />
+    </label>
+    <div class="converter-icon">÷</div>
+    <label class="converter-field">
+      <span>分攤人數</span>
+      <input type="number" id="split-people" inputmode="numeric" value="6" min="1" />
+    </label>
+  </div>
+  <div class="rate-info" id="split-result"></div>
 </main>
 
 <script src="js/data.js"></script>

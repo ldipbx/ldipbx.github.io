@@ -91,6 +91,7 @@ const DAYS = [
         time: '18:00', type: 'activity', title: 'Sky Point Q1大廈 看夜景', duration: '建議1小時',
         desc: 'Q1大廈啟用時曾是南半球最高的住宅大樓，77樓的SkyPoint觀景台可360度俯瞰整個黃金海岸海岸線，天氣好時視野能遠眺布里斯本方向。',
         howTo: '77樓高空景觀台', status: 'confirmed', mapQuery: 'SkyPoint Observation Deck, Gold Coast, Australia', wikiTitle: 'Q1 Tower',
+        officialUrl: 'https://www.skypoint.com.au/',
       },
       {
         time: '晚餐', type: 'meal', title: 'Marios Italian Restaurant', status: 'confirmed', duration: '約1~1.5小時',
@@ -109,6 +110,7 @@ const DAYS = [
         time: '上午', type: 'activity', title: '可倫賓動物園 Currumbin Wildlife Sanctuary', status: 'confirmed', duration: '建議2~3小時',
         desc: '1947年開園的野生動物保護區，以能近距離餵食野生彩虹吸蜜鸚鵡聞名，園內也有無尾熊互動、袋鼠放養區等體驗行程。',
         mapQuery: 'Currumbin Wildlife Sanctuary, Australia', wikiTitle: 'Currumbin Wildlife Sanctuary',
+        officialUrl: 'https://currumbinsanctuary.com.au/',
       },
       {
         time: '下午', type: 'activity', title: 'Outlet 逛街', status: 'confirmed', duration: '建議2小時',
@@ -152,6 +154,7 @@ const DAYS = [
         desc: '歌劇院的白色風帆屋頂由丹麥建築師約恩·烏松設計，1973年啟用，2007年被列入世界文化遺產，是雪梨最具代表性的地標；港灣大橋暱稱「衣架橋」(The Coathanger)，是全世界最寬的長跨距鋼拱橋之一，除了走路過橋，也可以報名攀橋(BridgeClimb)活動登頂。',
         howTo: '由北到南走約20分鐘，大橋入口在岩石區的 Argyle Stairs（爬樓梯）或 Bridge Stairs（樓梯/電梯）',
         mapQuery: 'Sydney Opera House, Australia', wikiTitle: 'Sydney Opera House',
+        officialUrl: 'https://www.sydneyoperahouse.com/',
       },
     ],
     notes: [],
@@ -167,6 +170,7 @@ const DAYS = [
         desc: '因山谷間大片尤加利樹釋放的油氣在陽光下散射出藍色薄霧而得名，1994年被列入世界自然遺產，是雪梨近郊最受歡迎的一日遊景點。',
         howTo: '主要4個景點可搭纜車俯瞰全景：景觀世界(Scenic World)、回音谷(Echo Point)、巨人階梯(Giant Stairway)、三姊妹岩(Three Sisters)',
         alternatives: [], mapQuery: 'Blue Mountains National Park, Australia', wikiTitle: 'Blue Mountains National Park',
+        officialUrl: 'https://www.scenicworld.com.au/',
       },
     ],
     notes: [],
@@ -218,6 +222,7 @@ const DAYS = [
         duration: '半天～全天，中午可在 Lakeside 站吃午餐',
         alternatives: ['與下方菲利浦島擇一，兩者都是全天行程無法同天完成'],
         mapQuery: 'Puffing Billy Railway, Belgrave, Australia', wikiTitle: 'Puffing Billy Railway',
+        officialUrl: 'https://puffingbillyrailway.org.au/',
       },
       {
         time: '全天（二選一）', type: 'activity', title: '菲利浦島一日遊 Phillip Island', status: 'candidate',
@@ -226,6 +231,7 @@ const DAYS = [
         howTo: '彩虹小屋沙灘 Brighton Beach、月光野生動物園、格蘭特岬角及諾比斯、企鵝歸巢（傍晚～晚上才開始，建議晚去晚回）',
         alternatives: ['與上方普芬比利小火車擇一，兩者都是全天行程無法同天完成'],
         mapQuery: 'Phillip Island, Australia', wikiTitle: 'Phillip Island',
+        officialUrl: 'https://www.penguins.org.au/',
       },
       {
         time: '晚上（擇一）', type: 'meal', title: '晚餐：亞拉河 Yarra River 畔 / BangPop 泰式料理',
@@ -439,6 +445,17 @@ const CHECKLIST = [
   { item: '國際旅遊保險', detail: '' },
   { item: '網卡 / 漫遊 / Wifi 分享器', detail: '' },
   { item: '澳洲電源轉接頭', detail: '' },
+];
+
+// 當地實用須知：常見的旅遊通則，不是這趟行程專屬的資訊
+const AU_FACTS = [
+  { title: '小費文化', detail: '澳洲沒有強制小費文化，餐廳帳單通常已內含服務費，不用額外加給，對服務特別滿意的話可以自由給，不給也完全沒問題。' },
+  { title: '自來水', detail: '主要城市的自來水可以直接生飲，不用特地買瓶裝水，飯店浴室水龍頭的水也能喝。' },
+  { title: '電壓／插座', detail: '澳洲電壓230V，插座是三孔扁腳（Type I），跟台灣的兩孔扁腳（Type A）不同，記得帶轉接頭；台灣電器多為110V，如果是不支援雙電壓的電器（例如吹風機）要注意。' },
+  { title: '緊急電話', detail: '報警、救護車、消防車統一撥打 000（免付費，全國通用）。' },
+  { title: '上網 / SIM卡', detail: '可以在機場或當地超商（7-Eleven、Woolworths等）買預付卡，Telstra涵蓋範圍最廣但較貴，Optus/Vodafone較便宜；也可以出發前準備好澳洲的eSIM。' },
+  { title: '叫車', detail: 'Uber在布里斯本、黃金海岸、雪梨、墨爾本都能正常叫車，跟台灣用法一樣。' },
+  { title: '時差', detail: '可以直接看首頁或每日行程頁上方的雙時區時鐘，會自動顯示台灣與當地即時時間。' },
 ];
 
 const OPEN_ISSUES = [

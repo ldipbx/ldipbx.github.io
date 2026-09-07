@@ -128,6 +128,11 @@ function mapLink(query) {
   return `<a class="map-link" href="${mapsUrl}" target="_blank" rel="noopener">📍 在地圖上查看</a><a class="map-link" href="${imagesUrl}" target="_blank" rel="noopener">🖼 看照片</a>`;
 }
 
+function officialLink(url) {
+  if (!url) return '';
+  return `<a class="map-link" href="${url}" target="_blank" rel="noopener">🎫 官方訂票／資訊</a>`;
+}
+
 // 幫有 wikiTitle 的段落非同步補上維基百科縮圖，抓不到就整塊移除不留空白
 function hydratePhotos(root) {
   (root || document).querySelectorAll('.seg-photo[data-wiki]').forEach((el) => {
@@ -428,7 +433,7 @@ function renderDayPage() {
         ${s.howTo ? `<div class="seg-detail">🚌 ${s.howTo}</div>` : ''}
         ${s.warning ? `<div class="seg-warning">⚠ ${s.warning}</div>` : ''}
         ${s.alternatives && s.alternatives.length ? `<div class="seg-alt">備案：<ul>${s.alternatives.map((a) => `<li>${a}</li>`).join('')}</ul></div>` : ''}
-        ${s.mapQuery ? `<div class="seg-map">${mapLink(s.mapQuery)}</div>` : ''}
+        ${(s.mapQuery || s.officialUrl) ? `<div class="seg-map">${mapLink(s.mapQuery)}${officialLink(s.officialUrl)}</div>` : ''}
       </div>
     </div>
   `;
@@ -555,6 +560,29 @@ function renderCurrencyPage() {
     };
   }
 
+  function bindSplitCalculator(rate) {
+    const totalInput = document.getElementById('split-total');
+    const peopleInput = document.getElementById('split-people');
+    const resultEl = document.getElementById('split-result');
+    if (!totalInput || !peopleInput || !resultEl) return;
+
+    function recalc() {
+      const total = parseFloat(totalInput.value);
+      const people = parseInt(peopleInput.value, 10);
+      if (Number.isNaN(total) || Number.isNaN(people) || people < 1) {
+        resultEl.textContent = '輸入帳單總額跟人數就會自動算出每人要付多少';
+        return;
+      }
+      const perPersonAud = total / people;
+      const perPersonTwd = perPersonAud * rate;
+      resultEl.innerHTML = `每人 AUD ${perPersonAud.toFixed(2)}<div class="rate-updated">約合 TWD ${Math.round(perPersonTwd)}</div>`;
+    }
+
+    totalInput.oninput = recalc;
+    peopleInput.oninput = recalc;
+    recalc();
+  }
+
   // 重新整理統一交給標題列右上角的「🔄 更新」按鈕，這裡只負責顯示、
   // 並在 window.onTripDataRefreshed 被呼叫時重新讀一次（已經是快取好的新資料，不會再打一次API）
   function load() {
@@ -573,6 +601,7 @@ function renderCurrencyPage() {
         <div class="rate-hint">想拿最新匯率可以點右上角的「🔄 更新」</div>
       `;
       bindInputs(rate);
+      bindSplitCalculator(rate);
     });
   }
 
@@ -620,4 +649,11 @@ function renderChecklistPage() {
   });
 
   renderOpenIssuesList(document.getElementById('open-issues'), OPEN_ISSUES);
+
+  document.getElementById('au-facts').innerHTML = AU_FACTS.map((f) => `
+    <div class="attraction">
+      <div class="name">${f.title}</div>
+      <div class="desc">${f.detail}</div>
+    </div>
+  `).join('');
 }

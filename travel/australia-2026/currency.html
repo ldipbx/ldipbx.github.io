@@ -11,6 +11,8 @@
 <body>
 <header class="app-header" id="app-header"></header>
 <main>
+  <div id="sync-gate"></div>
+
   <h2 class="section-title" style="margin-top:0">澳幣 ⇄ 台幣 快速換算</h2>
 
   <div class="converter-card">
@@ -55,7 +57,7 @@
     <div class="split-field-label">誰要分攤？</div>
     <div class="member-chips" id="participants-select"></div>
     <div class="rate-stale" id="expense-error"></div>
-    <button type="button" class="refresh-btn add-expense-btn" id="add-expense-btn">新增這筆花費</button>
+    <button type="button" class="add-expense-btn" id="add-expense-btn">新增這筆花費</button>
   </div>
 
   <h2 class="section-title">花費紀錄</h2>
@@ -63,12 +65,16 @@
 
   <h2 class="section-title">結算</h2>
   <div id="settlement-result"></div>
-  <p class="hint">所有分帳資料只存在這台裝置裡，不會同步給其他人</p>
+  <p class="hint">輸入旅遊代碼並連線後，分帳資料會即時同步給輸入同一組代碼的所有人；沒有連線的話則只存在這台裝置裡</p>
 </main>
 
+<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore-compat.js"></script>
 <script src="js/data.js"></script>
 <script src="js/weather.js"></script>
 <script src="js/currency.js"></script>
+<script src="js/cloudsync.js"></script>
 <script src="js/splitter.js"></script>
 <script src="js/app.js"></script>
 <script>renderCurrencyPage();</script>

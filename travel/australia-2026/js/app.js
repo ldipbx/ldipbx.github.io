@@ -1,5 +1,48 @@
 // 共用渲染邏輯，讀取 data.js 裡的 TRIP / DAYS / CITY_GUIDES / CHECKLIST / OPEN_ISSUES
 
+// 「旅遊代碼」輸入區塊，決定分帳/清單資料要只存本機、還是連到雲端多裝置同步。
+// 依賴 js/cloudsync.js 提供的 getTripCode/setTripCode/startSync。
+function reconnectTrip(newCode, onStatus) {
+  setTripCode(newCode);
+  syncingReset();
+  startSync(onStatus);
+}
+
+function renderSyncGate(containerId) {
+  const gateEl = document.getElementById(containerId);
+  if (!gateEl) {
+    startSync();
+    return;
+  }
+
+  gateEl.innerHTML = `
+    <div class="sync-gate">
+      <input type="text" id="trip-code-input" placeholder="輸入旅遊代碼（不輸入就只存這台裝置）" />
+      <button type="button" class="refresh-btn" id="trip-code-connect">連線</button>
+    </div>
+    <div class="hint" id="sync-status"></div>
+  `;
+
+  const input = document.getElementById('trip-code-input');
+  const statusEl = document.getElementById('sync-status');
+  const saved = getTripCode();
+  if (saved) input.value = saved;
+
+  function setStatus(text) { statusEl.textContent = text; }
+
+  document.getElementById('trip-code-connect').addEventListener('click', () => {
+    const code = input.value.trim();
+    if (!code) {
+      reconnectTrip('', setStatus);
+      setStatus('已改回只存在這台裝置');
+      return;
+    }
+    reconnectTrip(code, setStatus);
+  });
+
+  startSync(setStatus);
+}
+
 const STATUS_LABEL = {
   confirmed: '已確定',
   tbd: '待確認',
@@ -544,6 +587,7 @@ function renderCityPage() {
 // ---- currency.html ----
 function renderCurrencyPage() {
   renderHeader('currency.html');
+  renderSyncGate('sync-gate');
 
   const audInput = document.getElementById('aud-input');
   const twdInput = document.getElementById('twd-input');
@@ -703,6 +747,8 @@ function renderCurrencyPage() {
 
   // 重新整理統一交給標題列右上角的「🔄 更新」按鈕，這裡只負責顯示、
   // 並在 window.onTripDataRefreshed 被呼叫時重新讀一次（已經是快取好的新資料，不會再打一次API）
+  let currentRate = null;
+
   function load() {
     getAudToTwdRate().then((info) => {
       if (!info) {
@@ -710,6 +756,7 @@ function renderCurrencyPage() {
         return;
       }
       const { rate } = info;
+      currentRate = rate;
       const updated = new Date(info.updatedAt);
       const updatedText = Number.isNaN(updated.getTime()) ? info.updatedAt : updated.toLocaleString('zh-TW');
       rateInfoEl.innerHTML = `
@@ -723,48 +770,19 @@ function renderCurrencyPage() {
     });
   }
 
+  // 只註冊一次監聽，避免每次重新整理匯率都疊加一個新的監聽器
+  onTripDataChange(() => {
+    if (currentRate) renderExpenseSplitter(currentRate);
+  });
+
   load();
   window.onTripDataRefreshed = load;
 }
 
 // ---- checklist.html ----
-const CHECKLIST_STATE_KEY = 'au_trip_checklist_state_v1';
-
-function loadChecklistState() {
-  try {
-    return JSON.parse(localStorage.getItem(CHECKLIST_STATE_KEY)) || {};
-  } catch (e) {
-    return {};
-  }
-}
-
-function saveChecklistState(state) {
-  try { localStorage.setItem(CHECKLIST_STATE_KEY, JSON.stringify(state)); } catch (e) { /* 存不進去就算了 */ }
-}
-
 function renderChecklistPage() {
   renderHeader('checklist.html');
-
-  const state = loadChecklistState();
-
-  document.getElementById('checklist').innerHTML = CHECKLIST.map((c) => `
-    <label class="checklist-item">
-      <input type="checkbox" data-key="${c.item}" ${state[c.item] ? 'checked' : ''} />
-      <span class="item-text">
-        <div class="title">${c.item}</div>
-        ${c.detail ? `<div class="detail">${c.detail}</div>` : ''}
-      </span>
-    </label>
-  `).join('');
-
-  // 勾選狀態存進 localStorage，重新整理或下次再開這頁都會記得
-  document.querySelectorAll('#checklist input[type="checkbox"]').forEach((input) => {
-    input.addEventListener('change', () => {
-      const current = loadChecklistState();
-      current[input.dataset.key] = input.checked;
-      saveChecklistState(current);
-    });
-  });
+  renderSyncGate('sync-gate');
 
   renderOpenIssuesList(document.getElementById('open-issues'), OPEN_ISSUES);
 
@@ -774,4 +792,48 @@ function renderChecklistPage() {
       <div class="desc">${f.detail}</div>
     </div>
   `).join('');
+
+  function renderChecklistItems() {
+    const state = getChecklistState();
+    document.getElementById('checklist').innerHTML = CHECKLIST.map((c) => `
+      <label class="checklist-item">
+        <input type="checkbox" data-key="${c.item}" ${state[c.item] ? 'checked' : ''} />
+        <span class="item-text">
+          <div class="title">${c.item}</div>
+          ${c.detail ? `<div class="detail">${c.detail}</div>` : ''}
+        </span>
+      </label>
+    `).join('');
+
+    document.querySelectorAll('#checklist input[type="checkbox"]').forEach((input) => {
+      input.addEventListener('change', () => {
+        const current = getChecklistState();
+        current[input.dataset.key] = input.checked;
+        saveChecklistState(current);
+      });
+    });
+  }
+
+  // 用跟分帳工具一樣的團員名單當身份，這樣才知道要記錄「誰」的清單進度
+  function renderIdentityGate() {
+    const members = getMembers();
+    const myName = getMyName();
+    const identityEl = document.getElementById('identity-gate');
+    if (identityEl) {
+      identityEl.innerHTML = `
+        <p class="hint">${members.includes(myName) ? `目前身份：${myName}（可以點下面換人）` : '選一下你是誰，才能記住你自己的清單進度'}</p>
+        <div class="member-chips" id="identity-chips"></div>
+      `;
+      document.getElementById('identity-chips').innerHTML = members.map((m) => `<button type="button" class="member-chip ${m === myName ? 'selected' : ''}" data-name="${m}">${m}</button>`).join('');
+      document.getElementById('identity-chips').querySelectorAll('.member-chip').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          setMyName(btn.dataset.name);
+          renderIdentityGate();
+        });
+      });
+    }
+    renderChecklistItems();
+  }
+
+  onTripDataChange(renderIdentityGate);
 }

@@ -888,6 +888,35 @@ main {
   color: var(--text-muted);
 }
 
+/* ---- 雲端同步 ---- */
+.sync-gate {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.sync-gate input {
+  flex: 1;
+  font-size: 13px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
+  color: var(--text);
+}
+
+.sync-gate .refresh-btn {
+  flex: 0 0 auto;
+  background: var(--text);
+  color: #fff;
+  border: none;
+  padding: 0 16px;
+}
+
+#identity-gate {
+  margin-bottom: 14px;
+}
+
 /* ---- 分帳記帳工具 ---- */
 .member-names {
   display: grid;
@@ -960,6 +989,12 @@ main {
   margin-top: 14px;
   padding: 10px;
   font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  background: var(--text);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
 }
 
 .expense-item {

@@ -11,20 +11,28 @@
 <body>
 <header class="app-header" id="app-header"></header>
 <main>
+  <div id="sync-gate"></div>
+
   <h2 class="section-title" style="margin-top:0">尚待確認的行程缺口</h2>
   <div id="open-issues"></div>
 
   <h2 class="section-title">行前準備清單</h2>
+  <div id="identity-gate"></div>
   <div id="checklist"></div>
 
   <h2 class="section-title">當地實用須知</h2>
   <div id="au-facts"></div>
 </main>
-<footer>勾選狀態會存在這台裝置的瀏覽器裡，換裝置或清除瀏覽資料會重置</footer>
+<footer>清單連線同步後會即時分享給同一組旅遊代碼的人；沒連線的話只存在這台裝置的瀏覽器裡</footer>
 
+<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore-compat.js"></script>
 <script src="js/data.js"></script>
 <script src="js/weather.js"></script>
 <script src="js/currency.js"></script>
+<script src="js/cloudsync.js"></script>
+<script src="js/splitter.js"></script>
 <script src="js/app.js"></script>
 <script>renderChecklistPage();</script>
 </body>

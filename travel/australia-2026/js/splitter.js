@@ -1,37 +1,24 @@
 // 分帳記帳工具：團員名單、花費紀錄、結算試算
-// 所有資料都存在這台裝置的 localStorage，不會同步到別人手機上，
-// 純粹是給付錢的那個人自己記帳、旅程結束後大家核對用。
-
-const SPLIT_MEMBERS_KEY = 'au_trip_split_members_v1';
-const SPLIT_EXPENSES_KEY = 'au_trip_split_expenses_v1';
-const DEFAULT_MEMBERS = ['旅伴1', '旅伴2', '旅伴3', '旅伴4', '旅伴5', '旅伴6'];
+// 實際的資料存取（本機 or 雲端）都交給 js/cloudsync.js 處理，這裡只管邏輯。
 
 function getMembers() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(SPLIT_MEMBERS_KEY));
-    if (Array.isArray(saved) && saved.length) return saved;
-  } catch (e) { /* 用預設值 */ }
-  return DEFAULT_MEMBERS.slice();
+  return getCachedTripData().members;
 }
 
 function saveMembers(members) {
-  try { localStorage.setItem(SPLIT_MEMBERS_KEY, JSON.stringify(members)); } catch (e) { /* 存不進去就算了 */ }
+  updateTripData({ members });
 }
 
 function getExpenses() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(SPLIT_EXPENSES_KEY));
-    if (Array.isArray(saved)) return saved;
-  } catch (e) { /* 用空陣列 */ }
-  return [];
+  return getCachedTripData().expenses;
 }
 
 function saveExpenses(expenses) {
-  try { localStorage.setItem(SPLIT_EXPENSES_KEY, JSON.stringify(expenses)); } catch (e) { /* 存不進去就算了 */ }
+  updateTripData({ expenses });
 }
 
 function addExpense(expense) {
-  const expenses = getExpenses();
+  const expenses = getExpenses().slice();
   expenses.push({ id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, ...expense });
   saveExpenses(expenses);
   return expenses;
@@ -84,4 +71,18 @@ function simplifyDebts(balance) {
     if (creditors[j].amount < 0.01) j++;
   }
   return transactions;
+}
+
+// 行前清單狀態：每個人用自己的名字分開存，放在 tripData.checklists[名字] 底下
+function getChecklistState() {
+  const name = getMyName() || '_local';
+  const data = getCachedTripData();
+  return (data.checklists && data.checklists[name]) || {};
+}
+
+function saveChecklistState(state) {
+  const name = getMyName() || '_local';
+  const data = getCachedTripData();
+  const checklists = { ...(data.checklists || {}), [name]: state };
+  updateTripData({ checklists });
 }

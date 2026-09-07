@@ -888,6 +888,131 @@ main {
   color: var(--text-muted);
 }
 
+/* ---- 分帳記帳工具 ---- */
+.member-names {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.member-name-input {
+  font-size: 13px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
+  color: var(--text);
+}
+
+.expense-amount-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.expense-amount-row .converter-field { flex: 1; }
+.currency-select-field { flex: 0 0 90px; }
+
+.currency-select-field select {
+  width: 100%;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 10px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.split-field-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.member-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.member-chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.member-chip.selected {
+  background: var(--text);
+  color: #fff;
+  border-color: var(--text);
+}
+
+.add-expense-btn {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.expense-item {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.expense-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  padding-right: 40px;
+}
+
+.expense-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.expense-delete {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 11px;
+  color: var(--tbd);
+  background: none;
+  border: none;
+  font-family: inherit;
+}
+
+.settlement-row {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.settlement-amount {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
 /* ---- checklist.html ---- */
 .checklist-item {
   background: var(--card-bg);

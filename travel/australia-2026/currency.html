@@ -28,24 +28,48 @@
   <div class="rate-info" id="rate-info">匯率讀取中…</div>
   <p class="hint">僅供購物時快速估算參考，實際刷卡/現場換匯匯率會略有不同</p>
 
-  <h2 class="section-title">分帳小工具</h2>
+  <h2 class="section-title">團員名單（點名字可以改）</h2>
+  <div class="member-names" id="members-list"></div>
+
+  <h2 class="section-title">新增花費</h2>
   <div class="converter-card">
     <label class="converter-field">
-      <span>帳單總額 (AUD)</span>
-      <input type="number" id="split-total" inputmode="decimal" placeholder="0" />
+      <span>項目說明</span>
+      <input type="text" id="expense-desc" placeholder="例如：晚餐 BangPop" />
     </label>
-    <div class="converter-icon">÷</div>
-    <label class="converter-field">
-      <span>分攤人數</span>
-      <input type="number" id="split-people" inputmode="numeric" value="6" min="1" />
-    </label>
+    <div class="expense-amount-row">
+      <label class="converter-field">
+        <span>金額</span>
+        <input type="number" id="expense-amount" inputmode="decimal" placeholder="0" />
+      </label>
+      <label class="converter-field currency-select-field">
+        <span>幣別</span>
+        <select id="expense-currency">
+          <option value="AUD">AUD</option>
+          <option value="TWD">TWD</option>
+        </select>
+      </label>
+    </div>
+    <div class="split-field-label">誰付的錢？</div>
+    <div class="member-chips" id="payer-select"></div>
+    <div class="split-field-label">誰要分攤？</div>
+    <div class="member-chips" id="participants-select"></div>
+    <div class="rate-stale" id="expense-error"></div>
+    <button type="button" class="refresh-btn add-expense-btn" id="add-expense-btn">新增這筆花費</button>
   </div>
-  <div class="rate-info" id="split-result"></div>
+
+  <h2 class="section-title">花費紀錄</h2>
+  <div id="expense-list"></div>
+
+  <h2 class="section-title">結算</h2>
+  <div id="settlement-result"></div>
+  <p class="hint">所有分帳資料只存在這台裝置裡，不會同步給其他人</p>
 </main>
 
 <script src="js/data.js"></script>
 <script src="js/weather.js"></script>
 <script src="js/currency.js"></script>
+<script src="js/splitter.js"></script>
 <script src="js/app.js"></script>
 <script>renderCurrencyPage();</script>
 </body>

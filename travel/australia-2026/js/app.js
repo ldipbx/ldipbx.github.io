@@ -560,27 +560,145 @@ function renderCurrencyPage() {
     };
   }
 
-  function bindSplitCalculator(rate) {
-    const totalInput = document.getElementById('split-total');
-    const peopleInput = document.getElementById('split-people');
-    const resultEl = document.getElementById('split-result');
-    if (!totalInput || !peopleInput || !resultEl) return;
+  // 分帳記帳工具：團員名單、新增花費、花費紀錄、結算，都需要匯率把TWD換算成AUD
+  function renderExpenseSplitter(rate) {
+    const membersListEl = document.getElementById('members-list');
+    if (!membersListEl) return; // 這頁沒有分帳工具就跳過
 
-    function recalc() {
-      const total = parseFloat(totalInput.value);
-      const people = parseInt(peopleInput.value, 10);
-      if (Number.isNaN(total) || Number.isNaN(people) || people < 1) {
-        resultEl.textContent = '輸入帳單總額跟人數就會自動算出每人要付多少';
-        return;
-      }
-      const perPersonAud = total / people;
-      const perPersonTwd = perPersonAud * rate;
-      resultEl.innerHTML = `每人 AUD ${perPersonAud.toFixed(2)}<div class="rate-updated">約合 TWD ${Math.round(perPersonTwd)}</div>`;
+    const payerSelectEl = document.getElementById('payer-select');
+    const participantsSelectEl = document.getElementById('participants-select');
+    const expenseListEl = document.getElementById('expense-list');
+    const settlementEl = document.getElementById('settlement-result');
+    const errorEl = document.getElementById('expense-error');
+
+    let members = getMembers();
+    let selectedPayer = members[0];
+    let selectedParticipants = new Set(members);
+
+    function renderMembers() {
+      membersListEl.innerHTML = members.map((m, i) => `<input type="text" class="member-name-input" data-idx="${i}" value="${m}" />`).join('');
+      membersListEl.querySelectorAll('.member-name-input').forEach((input) => {
+        input.addEventListener('change', () => {
+          const idx = parseInt(input.dataset.idx, 10);
+          const oldName = members[idx];
+          const newName = input.value.trim() || oldName;
+          members[idx] = newName;
+          saveMembers(members);
+
+          if (selectedPayer === oldName) selectedPayer = newName;
+          if (selectedParticipants.has(oldName)) { selectedParticipants.delete(oldName); selectedParticipants.add(newName); }
+
+          // 改名的話，已經記錄的花費也要跟著更新payer/participants，不然會對不上結算
+          const expenses = getExpenses().map((e) => ({
+            ...e,
+            payer: e.payer === oldName ? newName : e.payer,
+            participants: e.participants.map((p) => (p === oldName ? newName : p)),
+          }));
+          saveExpenses(expenses);
+
+          renderPayerChips();
+          renderParticipantChips();
+          renderExpenseList();
+          renderSettlement();
+        });
+      });
     }
 
-    totalInput.oninput = recalc;
-    peopleInput.oninput = recalc;
-    recalc();
+    function renderPayerChips() {
+      payerSelectEl.innerHTML = members.map((m) => `<button type="button" class="member-chip ${m === selectedPayer ? 'selected' : ''}" data-name="${m}">${m}</button>`).join('');
+      payerSelectEl.querySelectorAll('.member-chip').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          selectedPayer = btn.dataset.name;
+          renderPayerChips();
+        });
+      });
+    }
+
+    function renderParticipantChips() {
+      participantsSelectEl.innerHTML = members.map((m) => `<button type="button" class="member-chip ${selectedParticipants.has(m) ? 'selected' : ''}" data-name="${m}">${m}</button>`).join('');
+      participantsSelectEl.querySelectorAll('.member-chip').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const name = btn.dataset.name;
+          if (selectedParticipants.has(name)) selectedParticipants.delete(name);
+          else selectedParticipants.add(name);
+          renderParticipantChips();
+        });
+      });
+    }
+
+    function renderExpenseList() {
+      const expenses = getExpenses();
+      if (!expenses.length) {
+        expenseListEl.innerHTML = '<p class="hint">目前還沒有記錄任何花費</p>';
+        return;
+      }
+      expenseListEl.innerHTML = expenses.slice().reverse().map((e) => `
+        <div class="expense-item">
+          <div class="expense-main">
+            <span class="expense-desc">${e.desc || '（未命名）'}</span>
+            <span class="expense-amount">${e.currency} ${e.amount}</span>
+          </div>
+          <div class="expense-meta">${e.payer} 付款・${e.participants.length}人分攤（${e.participants.join('、')}）</div>
+          <button type="button" class="expense-delete" data-id="${e.id}">刪除</button>
+        </div>
+      `).join('');
+      expenseListEl.querySelectorAll('.expense-delete').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          removeExpense(btn.dataset.id);
+          renderExpenseList();
+          renderSettlement();
+        });
+      });
+    }
+
+    function renderSettlement() {
+      const expenses = getExpenses();
+      if (!expenses.length) {
+        settlementEl.innerHTML = '<p class="hint">記錄花費後這裡會顯示結算結果</p>';
+        return;
+      }
+      const balance = computeBalances(expenses, members, rate);
+      const transactions = simplifyDebts(balance);
+      if (!transactions.length) {
+        settlementEl.innerHTML = '<p class="hint">目前帳務打平，沒有人欠誰錢</p>';
+        return;
+      }
+      settlementEl.innerHTML = transactions.map((t) => `
+        <div class="settlement-row">
+          <strong>${t.from}</strong> 付給 <strong>${t.to}</strong>
+          <span class="settlement-amount">AUD ${t.amount.toFixed(2)}（約TWD ${Math.round(t.amount * rate)}）</span>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('add-expense-btn').addEventListener('click', () => {
+      const descInput = document.getElementById('expense-desc');
+      const amountInput = document.getElementById('expense-amount');
+      const currency = document.getElementById('expense-currency').value;
+      const amount = parseFloat(amountInput.value);
+
+      if (Number.isNaN(amount) || amount <= 0) {
+        errorEl.textContent = '請輸入正確的金額';
+        return;
+      }
+      if (!selectedParticipants.size) {
+        errorEl.textContent = '至少要選一個人分攤';
+        return;
+      }
+      errorEl.textContent = '';
+
+      addExpense({ desc: descInput.value.trim(), amount, currency, payer: selectedPayer, participants: Array.from(selectedParticipants) });
+      descInput.value = '';
+      amountInput.value = '';
+      renderExpenseList();
+      renderSettlement();
+    });
+
+    renderMembers();
+    renderPayerChips();
+    renderParticipantChips();
+    renderExpenseList();
+    renderSettlement();
   }
 
   // 重新整理統一交給標題列右上角的「🔄 更新」按鈕，這裡只負責顯示、
@@ -601,7 +719,7 @@ function renderCurrencyPage() {
         <div class="rate-hint">想拿最新匯率可以點右上角的「🔄 更新」</div>
       `;
       bindInputs(rate);
-      bindSplitCalculator(rate);
+      renderExpenseSplitter(rate);
     });
   }
 

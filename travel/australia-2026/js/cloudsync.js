@@ -5,8 +5,10 @@
 // - 沒有輸入「旅遊代碼」之前，資料只存在這台裝置的 localStorage，跟原本行為一樣。
 // - 輸入旅遊代碼並連線後，資料改存進 Firestore 的 trips/{旅遊代碼} 這份文件，
 //   所有輸入過同一組代碼的裝置都會即時看到彼此的更新。
-// - 旅遊代碼是自己取的一串文字，不會出現在程式碼裡，只有輸入過的裝置知道，
-//   安全性靠這組代碼保密（不是帳號密碼等級的保護，但對家庭旅遊資料來說已經足夠）。
+// - 旅遊代碼只能由管理者在 Firebase 後台手動建立，網站本身不會自動幫任何人
+//   建立新代碼；一般使用者輸入不存在的代碼只會看到「找不到這組代碼」，
+//   不會意外建出一堆空的旅遊資料。這個限制是寫在 Firestore 安全規則裡
+//   （只允許 read/update，不允許 create），不是單純靠程式碼擋。
 
 const FIREBASE_CONFIG = {
   apiKey: 'AIzaSyArftU9EBvT8YS9LGTioerGltnnBJ00iJM',
@@ -118,12 +120,13 @@ function startSync(onStatus) {
     docRef.onSnapshot((snap) => {
       if (snap.exists) {
         tripCache = { ...defaultTripData(), ...snap.data() };
+        notifyListeners();
+        if (onStatus) onStatus('✓ 已連線同步');
       } else {
-        tripCache = defaultTripData();
-        docRef.set(tripCache);
+        // 故意不自動建立新文件：只有管理者能在 Firebase 後台手動建立旅遊代碼，
+        // 這裡繼續監聽，如果之後代碼被建立起來，畫面會自動連上不用重新整理
+        if (onStatus) onStatus('⚠ 找不到這組代碼，請確認代碼是否正確，或請管理者先建立');
       }
-      notifyListeners();
-      if (onStatus) onStatus('✓ 已連線同步');
     }, () => {
       if (onStatus) onStatus('同步發生問題，請確認網路連線');
     });
@@ -142,7 +145,9 @@ function updateTripData(partial) {
 
   const code = getTripCode();
   if (code && syncing && firestoreDb) {
-    firestoreDb.collection('trips').doc(code).set(partial, { merge: true });
+    // 如果這組代碼還沒被管理者建立，這裡會因為安全規則擋下create而寫入失敗，
+    // 本機畫面已經先樂觀更新過，不會整個壞掉，只是不會真的同步出去
+    firestoreDb.collection('trips').doc(code).set(partial, { merge: true }).catch(() => {});
   } else {
     writeLocalFallback(tripCache);
   }

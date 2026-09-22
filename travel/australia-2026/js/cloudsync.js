@@ -115,7 +115,7 @@ function startSync(onStatus) {
     ensureFirebaseInit();
     authReadyPromise = firebase.auth().signInAnonymously();
   } catch (e) {
-    if (onStatus) onStatus('連線失敗，改用本機資料');
+    if (onStatus) onStatus(`連線失敗（${e.message || e}），改用本機資料`);
     syncing = false;
     tripCache = readLocalFallback();
     notifyListeners();
@@ -134,11 +134,11 @@ function startSync(onStatus) {
         // 這裡繼續監聽，如果之後代碼被建立起來，畫面會自動連上不用重新整理
         if (onStatus) onStatus('⚠ 找不到這組代碼，請確認代碼是否正確，或請管理者先建立');
       }
-    }, () => {
-      if (onStatus) onStatus('同步發生問題，請確認網路連線');
+    }, (err) => {
+      if (onStatus) onStatus(`同步發生問題（${err.message || err.code || err}），請確認網路連線`);
     });
-  }).catch(() => {
-    if (onStatus) onStatus('連線失敗，改用本機資料');
+  }).catch((err) => {
+    if (onStatus) onStatus(`連線失敗（${err.message || err.code || err}），改用本機資料`);
     syncing = false;
     tripCache = readLocalFallback();
     notifyListeners();

@@ -199,3 +199,14 @@ function createTrip(code) {
     ...defaultTripData(),
   });
 }
+
+// 列出所有已建立的旅遊代碼；Firestore規則只開放管理者能做這個查詢，
+// 一般人即使連線中也無法列出別組代碼，只能用「已知的代碼」讀取單一文件
+function listAllTrips() {
+  ensureFirebaseInit();
+  return firestoreDb.collection('trips').get().then((snapshot) => {
+    const trips = [];
+    snapshot.forEach((doc) => trips.push({ code: doc.id, ...doc.data() }));
+    return trips;
+  });
+}

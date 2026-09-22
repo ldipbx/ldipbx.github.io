@@ -895,6 +895,32 @@ function renderAdminPage() {
       adminSignOut();
     });
     panelEl.style.display = '';
+    renderTripList();
+  }
+
+  function renderTripList() {
+    const listEl = document.getElementById('trip-list');
+    if (!listEl) return;
+    listEl.textContent = '讀取中…';
+    listAllTrips().then((trips) => {
+      if (!trips.length) {
+        listEl.innerHTML = '<p class="hint">目前還沒有建立任何旅遊代碼</p>';
+        return;
+      }
+      listEl.innerHTML = trips.map((t) => {
+        const memberCount = (t.members || []).length;
+        const expenseCount = (t.expenses || []).length;
+        const created = t.createdAt ? new Date(t.createdAt).toLocaleDateString('zh-TW') : '未知';
+        return `
+          <div class="expense-item">
+            <div class="expense-main"><span class="expense-desc">${t.code}</span></div>
+            <div class="expense-meta">${memberCount}位團員・${expenseCount}筆花費・建立於 ${created}</div>
+          </div>
+        `;
+      }).join('');
+    }).catch((err) => {
+      listEl.innerHTML = `<p class="rate-stale">讀取失敗：${err.message}</p>`;
+    });
   }
 
   onAdminAuthChange((user) => {
@@ -913,6 +939,7 @@ function renderAdminPage() {
     createTrip(code).then(() => {
       resultEl.innerHTML = `✓ 建立成功！代碼是「${code}」，可以私訊分享給旅伴了`;
       codeInput.value = '';
+      renderTripList();
     }).catch((err) => {
       resultEl.textContent = `建立失敗：${err.message}（可能是還沒登入，或是這個帳號沒有建立權限）`;
     });

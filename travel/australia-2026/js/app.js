@@ -650,33 +650,9 @@ function renderSplitPage() {
     let selectedPayer = members[0];
     let selectedParticipants = new Set(members);
 
+    // 團員名單現在只能由管理者在管理者頁面設定，這裡只負責顯示
     function renderMembers() {
-      membersListEl.innerHTML = members.map((m, i) => `<input type="text" class="member-name-input" data-idx="${i}" value="${m}" />`).join('');
-      membersListEl.querySelectorAll('.member-name-input').forEach((input) => {
-        input.addEventListener('change', () => {
-          const idx = parseInt(input.dataset.idx, 10);
-          const oldName = members[idx];
-          const newName = input.value.trim() || oldName;
-          members[idx] = newName;
-          saveMembers(members);
-
-          if (selectedPayer === oldName) selectedPayer = newName;
-          if (selectedParticipants.has(oldName)) { selectedParticipants.delete(oldName); selectedParticipants.add(newName); }
-
-          // 改名的話，已經記錄的花費也要跟著更新payer/participants，不然會對不上結算
-          const expenses = getExpenses().map((e) => ({
-            ...e,
-            payer: e.payer === oldName ? newName : e.payer,
-            participants: e.participants.map((p) => (p === oldName ? newName : p)),
-          }));
-          saveExpenses(expenses);
-
-          renderPayerChips();
-          renderParticipantChips();
-          renderExpenseList();
-          renderSettlement();
-        });
-      });
+      membersListEl.innerHTML = members.map((m) => `<div class="member-chip member-chip-static">${m}</div>`).join('');
     }
 
     function renderPayerChips() {
@@ -898,6 +874,10 @@ function renderAdminPage() {
     renderTripList();
   }
 
+  // 每組代碼一張卡片，點「編輯團員名單」展開可以新增/刪除/改名/儲存的表單；
+  // 展開狀態跟目前編輯到一半的名字都存在這裡，重新整理列表(renderTripList)時清空
+  const openEditors = {};
+
   function renderTripList() {
     const listEl = document.getElementById('trip-list');
     if (!listEl) return;
@@ -907,19 +887,121 @@ function renderAdminPage() {
         listEl.innerHTML = '<p class="hint">目前還沒有建立任何旅遊代碼</p>';
         return;
       }
-      listEl.innerHTML = trips.map((t) => {
-        const memberCount = (t.members || []).length;
-        const expenseCount = (t.expenses || []).length;
-        const created = t.createdAt ? new Date(t.createdAt).toLocaleDateString('zh-TW') : '未知';
-        return `
-          <div class="expense-item">
-            <div class="expense-main"><span class="expense-desc">${t.code}</span></div>
-            <div class="expense-meta">${memberCount}位團員・${expenseCount}筆花費・建立於 ${created}</div>
-          </div>
-        `;
-      }).join('');
+      listEl.innerHTML = trips.map((t) => renderTripCard(t)).join('');
+      wireTripList(listEl, trips);
     }).catch((err) => {
       listEl.innerHTML = `<p class="rate-stale">讀取失敗：${err.message}</p>`;
+    });
+  }
+
+  function renderTripCard(t) {
+    const memberCount = (t.members || []).length;
+    const expenseCount = (t.expenses || []).length;
+    const created = t.createdAt ? new Date(t.createdAt).toLocaleDateString('zh-TW') : '未知';
+    const editing = openEditors[t.code];
+    return `
+      <div class="expense-item trip-admin-card">
+        <div class="expense-main"><span class="expense-desc">${t.code}</span></div>
+        <div class="expense-meta">${memberCount}位團員・${expenseCount}筆花費・建立於 ${created}</div>
+        <div class="trip-admin-actions">
+          <button type="button" class="trip-edit-btn" data-code="${t.code}">${editing ? '收合' : '編輯團員名單'}</button>
+          <button type="button" class="trip-delete-btn" data-code="${t.code}">刪除代碼</button>
+        </div>
+        ${editing ? renderMemberEditor(t.code, editing) : ''}
+      </div>
+    `;
+  }
+
+  function renderMemberEditor(code, members) {
+    return `
+      <div class="trip-members-editor">
+        <div class="trip-members-editor-list">
+          ${members.map((m, i) => `
+            <div class="trip-member-row">
+              <input type="text" class="member-name-input" data-idx="${i}" value="${m}" />
+              <button type="button" class="member-remove-btn" data-idx="${i}" title="刪除這位團員">✕</button>
+            </div>
+          `).join('')}
+        </div>
+        <button type="button" class="trip-add-member-btn">+ 新增團員</button>
+        <div class="rate-stale trip-editor-error"></div>
+        <button type="button" class="add-expense-btn trip-save-members-btn">儲存團員名單</button>
+      </div>
+    `;
+  }
+
+  function wireTripList(listEl, trips) {
+    listEl.querySelectorAll('.trip-edit-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const code = btn.dataset.code;
+        if (openEditors[code]) {
+          delete openEditors[code];
+        } else {
+          const trip = trips.find((t) => t.code === code);
+          openEditors[code] = (trip.members || []).slice();
+        }
+        renderTripList();
+      });
+    });
+
+    listEl.querySelectorAll('.trip-delete-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const code = btn.dataset.code;
+        if (!window.confirm(`確定要刪除代碼「${code}」嗎？這會把這組代碼的團員、花費、清單資料全部刪掉，無法復原。`)) return;
+        deleteTrip(code).then(() => {
+          delete openEditors[code];
+          renderTripList();
+        }).catch((err) => {
+          window.alert(`刪除失敗：${err.message}`);
+        });
+      });
+    });
+
+    listEl.querySelectorAll('.trip-admin-card').forEach((card) => {
+      const editBtn = card.querySelector('.trip-edit-btn');
+      if (!editBtn) return;
+      const code = editBtn.dataset.code;
+      if (!openEditors[code]) return;
+
+      card.querySelectorAll('.member-name-input').forEach((input) => {
+        input.addEventListener('change', () => {
+          openEditors[code][parseInt(input.dataset.idx, 10)] = input.value;
+        });
+      });
+
+      card.querySelectorAll('.member-remove-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          openEditors[code].splice(parseInt(btn.dataset.idx, 10), 1);
+          renderTripList();
+        });
+      });
+
+      const addBtn = card.querySelector('.trip-add-member-btn');
+      if (addBtn) {
+        addBtn.addEventListener('click', () => {
+          openEditors[code].push('新團員');
+          renderTripList();
+        });
+      }
+
+      const saveBtn = card.querySelector('.trip-save-members-btn');
+      const errorEl = card.querySelector('.trip-editor-error');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+          const cleaned = openEditors[code].map((m) => m.trim()).filter(Boolean);
+          if (!cleaned.length) {
+            if (errorEl) errorEl.textContent = '至少要保留一位團員';
+            return;
+          }
+          if (errorEl) errorEl.textContent = '儲存中…';
+          updateTripMembers(code, cleaned).then(() => {
+            delete openEditors[code];
+            renderTripList();
+          }).catch((err) => {
+            if (errorEl) errorEl.textContent = `儲存失敗：${err.message}`;
+          });
+        });
+      }
     });
   }
 

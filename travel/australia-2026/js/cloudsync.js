@@ -210,3 +210,22 @@ function listAllTrips() {
     return trips;
   });
 }
+
+// 管理者在後台修改指定代碼的團員名單；跟 updateTripData 不同的是，
+// 這裡直接指定 code，不受限於這台裝置自己連線的旅遊代碼
+function updateTripMembers(code, members) {
+  ensureFirebaseInit();
+  return firestoreDb.collection('trips').doc(code).set({ members }, { merge: true }).then(() => {
+    // 如果管理者自己這台裝置剛好也連線同一組代碼，本機快取也一起更新，畫面才會馬上反應
+    if (getTripCode() === code) {
+      tripCache = { ...getCachedTripData(), members };
+      notifyListeners();
+    }
+  });
+}
+
+// 管理者刪除整組旅遊代碼；Firestore規則只允許管理者的帳號做這件事
+function deleteTrip(code) {
+  ensureFirebaseInit();
+  return firestoreDb.collection('trips').doc(code).delete();
+}

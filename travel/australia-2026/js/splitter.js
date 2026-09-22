@@ -5,10 +5,6 @@ function getMembers() {
   return getCachedTripData().members;
 }
 
-function saveMembers(members) {
-  updateTripData({ members });
-}
-
 function getExpenses() {
   return getCachedTripData().expenses;
 }

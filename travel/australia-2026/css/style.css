@@ -1032,6 +1032,73 @@ main {
   font-family: inherit;
 }
 
+.member-chip-static {
+  cursor: default;
+}
+
+/* ---- admin.html：旅遊代碼卡片，展開後可編輯團員名單 ---- */
+.trip-admin-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.trip-edit-btn,
+.trip-delete-btn {
+  flex: 1;
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  font-family: inherit;
+}
+
+.trip-delete-btn {
+  color: var(--tbd);
+  border-color: var(--tbd);
+}
+
+.trip-members-editor {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+.trip-member-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.trip-member-row .member-name-input {
+  flex: 1;
+}
+
+.member-remove-btn {
+  flex: 0 0 auto;
+  width: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
+  color: var(--tbd);
+  font-family: inherit;
+}
+
+.trip-add-member-btn {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px;
+  font-size: 13px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-muted);
+  font-family: inherit;
+}
+
 .settlement-row {
   background: var(--card-bg);
   border: 1px solid var(--border);

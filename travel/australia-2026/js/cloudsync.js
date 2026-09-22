@@ -5,10 +5,11 @@
 // - 沒有輸入「旅遊代碼」之前，資料只存在這台裝置的 localStorage，跟原本行為一樣。
 // - 輸入旅遊代碼並連線後，資料改存進 Firestore 的 trips/{旅遊代碼} 這份文件，
 //   所有輸入過同一組代碼的裝置都會即時看到彼此的更新。
-// - 旅遊代碼只能由管理者在 Firebase 後台手動建立，網站本身不會自動幫任何人
-//   建立新代碼；一般使用者輸入不存在的代碼只會看到「找不到這組代碼」，
-//   不會意外建出一堆空的旅遊資料。這個限制是寫在 Firestore 安全規則裡
-//   （只允許 read/update，不允許 create），不是單純靠程式碼擋。
+// - 旅遊代碼只有管理者能建立：管理者要用 Google 帳號登入（admin.html），
+//   一般使用者是匿名連線，Firestore 安全規則只允許管理者的 Google帳號
+//   （用 email 判斷）建立新文件，其他人輸入不存在的代碼只會看到
+//   「找不到這組代碼」，不會意外建出一堆空的旅遊資料。這個限制是寫在
+//   Firestore 安全規則裡，不是單純靠程式碼擋，繞不過去。
 
 const FIREBASE_CONFIG = {
   apiKey: 'AIzaSyArftU9EBvT8YS9LGTioerGltnnBJ00iJM',
@@ -37,6 +38,13 @@ let authReadyPromise = null;
 let tripCache = null;
 const changeListeners = [];
 let syncing = false;
+
+// app+firestore的初始化只需要做一次，同步流程跟管理者登入流程共用
+function ensureFirebaseInit() {
+  if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+  if (!firestoreDb) firestoreDb = firebase.firestore();
+  return firestoreDb;
+}
 
 function readLocalFallback() {
   try {
@@ -104,8 +112,7 @@ function startSync(onStatus) {
   if (onStatus) onStatus('連線中…');
 
   try {
-    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-    firestoreDb = firebase.firestore();
+    ensureFirebaseInit();
     authReadyPromise = firebase.auth().signInAnonymously();
   } catch (e) {
     if (onStatus) onStatus('連線失敗，改用本機資料');
@@ -151,4 +158,44 @@ function updateTripData(partial) {
   } else {
     writeLocalFallback(tripCache);
   }
+}
+
+// ---- 管理者專用：只有 admin.html 會用到這幾個 ----
+// 管理者用自己的Google帳號登入，取代匿名連線；Firestore規則會用這個
+// 登入者的email判斷「這個人可以建立新的旅遊代碼」
+function adminSignInWithGoogle() {
+  ensureFirebaseInit();
+  const provider = new firebase.auth.GoogleAuthProvider();
+  return firebase.auth().signInWithPopup(provider);
+}
+
+function adminSignOut() {
+  return firebase.auth().signOut();
+}
+
+// 目前是不是已經用（非匿名的）帳號登入
+function getAdminUser() {
+  try {
+    const user = firebase.auth().currentUser;
+    if (user && !user.isAnonymous) return user;
+  } catch (e) { /* firebase還沒初始化 */ }
+  return null;
+}
+
+function onAdminAuthChange(callback) {
+  ensureFirebaseInit();
+  firebase.auth().onAuthStateChanged((user) => {
+    callback(user && !user.isAnonymous ? user : null);
+  });
+}
+
+// 建立一組新的旅遊代碼；沒有管理者權限的話，Firestore規則會拒絕寫入，
+// 這裡的 catch 會把錯誤傳給呼叫端顯示
+function createTrip(code) {
+  ensureFirebaseInit();
+  return firestoreDb.collection('trips').doc(code).set({
+    active: true,
+    createdAt: new Date().toISOString(),
+    ...defaultTripData(),
+  });
 }

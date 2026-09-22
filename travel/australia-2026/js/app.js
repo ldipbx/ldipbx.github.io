@@ -837,3 +837,58 @@ function renderChecklistPage() {
 
   onTripDataChange(renderIdentityGate);
 }
+
+// ---- admin.html（不放在導覽選單裡，只有管理者知道網址）----
+function renderAdminPage() {
+  renderHeader('admin.html');
+
+  const authAreaEl = document.getElementById('admin-auth-area');
+  const panelEl = document.getElementById('admin-panel');
+  const resultEl = document.getElementById('create-trip-result');
+
+  function renderSignedOut() {
+    authAreaEl.innerHTML = `
+      <p class="hint">用你的 Google 帳號登入才能建立新的旅遊代碼</p>
+      <button type="button" class="add-expense-btn" id="google-signin-btn">用 Google 帳號登入</button>
+      <div class="rate-stale" id="admin-auth-error"></div>
+    `;
+    document.getElementById('google-signin-btn').addEventListener('click', () => {
+      adminSignInWithGoogle().catch((err) => {
+        document.getElementById('admin-auth-error').textContent = `登入失敗：${err.message}`;
+      });
+    });
+    panelEl.style.display = 'none';
+  }
+
+  function renderSignedIn(user) {
+    authAreaEl.innerHTML = `
+      <p class="hint">已登入：${user.email}</p>
+      <button type="button" class="add-expense-btn" id="admin-signout-btn">登出</button>
+    `;
+    document.getElementById('admin-signout-btn').addEventListener('click', () => {
+      adminSignOut();
+    });
+    panelEl.style.display = '';
+  }
+
+  onAdminAuthChange((user) => {
+    if (user) renderSignedIn(user);
+    else renderSignedOut();
+  });
+
+  document.getElementById('create-trip-btn').addEventListener('click', () => {
+    const codeInput = document.getElementById('new-trip-code');
+    const code = codeInput.value.trim();
+    if (!code) {
+      resultEl.textContent = '請輸入代碼';
+      return;
+    }
+    resultEl.textContent = '建立中…';
+    createTrip(code).then(() => {
+      resultEl.innerHTML = `✓ 建立成功！代碼是「${code}」，可以私訊分享給旅伴了`;
+      codeInput.value = '';
+    }).catch((err) => {
+      resultEl.textContent = `建立失敗：${err.message}（可能是還沒登入，或是這個帳號沒有建立權限）`;
+    });
+  });
+}

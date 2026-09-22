@@ -303,8 +303,25 @@ function renderOpenIssuesList(container, issues) {
 }
 
 // ---- index.html ----
+// 首頁頂端顯示旅伴名單（唯讀），沿用其他頁面已經連過的旅遊代碼靜默同步，
+// 沒連過的話就顯示本機的預設/快取名單，不會另外跳出連線輸入框
+function renderTeamMembers() {
+  const el = document.getElementById('team-members');
+  if (!el) return;
+  function render() {
+    const members = getMembers();
+    el.innerHTML = `
+      <span class="team-members-label">旅伴</span>
+      ${members.map((m) => `<span class="member-chip member-chip-static">${m}</span>`).join('')}
+    `;
+  }
+  onTripDataChange(render);
+  startSync();
+}
+
 function renderIndexPage() {
   renderHeader('index.html');
+  renderTeamMembers();
 
   const today = findTodayDay();
   renderDualClock('dual-clock', today ? today.citySlug : null);
@@ -636,115 +653,110 @@ function renderSplitPage() {
   renderHeader('split.html');
   renderSyncGate('sync-gate');
 
-  function renderExpenseSplitter(rate) {
-    const membersListEl = document.getElementById('members-list');
-    if (!membersListEl) return; // 這頁沒有分帳工具就跳過
+  const membersListEl = document.getElementById('members-list');
+  if (!membersListEl) return; // 這頁沒有分帳工具就跳過
 
-    const payerSelectEl = document.getElementById('payer-select');
-    const participantsSelectEl = document.getElementById('participants-select');
-    const expenseListEl = document.getElementById('expense-list');
-    const settlementEl = document.getElementById('settlement-result');
-    const errorEl = document.getElementById('expense-error');
+  const payerSelectEl = document.getElementById('payer-select');
+  const participantsSelectEl = document.getElementById('participants-select');
+  const expenseListEl = document.getElementById('expense-list');
+  const settlementEl = document.getElementById('settlement-result');
+  const errorEl = document.getElementById('expense-error');
 
-    let members = getMembers();
-    let selectedPayer = members[0];
-    let selectedParticipants = new Set(members);
+  // 這幾個狀態要跨重新整理保留：資料每次同步變動（包含自己剛新增的花費）都會觸發
+  // onTripDataChange 重新渲染一次，如果每次都重新初始化，使用者選好的付款人/分攤名單
+  // 會被重置成「全選」，剛新增的花費也會分給所有人，跟使用者實際選的對不上
+  let members = [];
+  let selectedPayer = null;
+  let selectedParticipants = new Set();
+  let currentRate = null;
 
-    // 團員名單現在只能由管理者在管理者頁面設定，這裡只負責顯示
-    function renderMembers() {
-      membersListEl.innerHTML = members.map((m) => `<div class="member-chip member-chip-static">${m}</div>`).join('');
+  // 團員名單有變動（管理者改名/新增/刪除）時，盡量保留現有選擇，
+  // 只有選到的人已經不存在了才需要回退成預設值
+  function syncMembersState() {
+    members = getMembers();
+    if (!selectedPayer || !members.includes(selectedPayer)) {
+      selectedPayer = members[0];
     }
+    selectedParticipants = new Set(Array.from(selectedParticipants).filter((p) => members.includes(p)));
+    if (!selectedParticipants.size) members.forEach((m) => selectedParticipants.add(m));
+  }
 
-    function renderPayerChips() {
-      payerSelectEl.innerHTML = members.map((m) => `<button type="button" class="member-chip ${m === selectedPayer ? 'selected' : ''}" data-name="${m}">${m}</button>`).join('');
-      payerSelectEl.querySelectorAll('.member-chip').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          selectedPayer = btn.dataset.name;
-          renderPayerChips();
-        });
+  // 團員名單現在只能由管理者在管理者頁面設定，這裡只負責顯示
+  function renderMembers() {
+    membersListEl.innerHTML = members.map((m) => `<div class="member-chip member-chip-static">${m}</div>`).join('');
+  }
+
+  function renderPayerChips() {
+    payerSelectEl.innerHTML = members.map((m) => `<button type="button" class="member-chip ${m === selectedPayer ? 'selected' : ''}" data-name="${m}">${m}</button>`).join('');
+    payerSelectEl.querySelectorAll('.member-chip').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        selectedPayer = btn.dataset.name;
+        renderPayerChips();
       });
-    }
-
-    function renderParticipantChips() {
-      participantsSelectEl.innerHTML = members.map((m) => `<button type="button" class="member-chip ${selectedParticipants.has(m) ? 'selected' : ''}" data-name="${m}">${m}</button>`).join('');
-      participantsSelectEl.querySelectorAll('.member-chip').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const name = btn.dataset.name;
-          if (selectedParticipants.has(name)) selectedParticipants.delete(name);
-          else selectedParticipants.add(name);
-          renderParticipantChips();
-        });
-      });
-    }
-
-    function renderExpenseList() {
-      const expenses = getExpenses();
-      if (!expenses.length) {
-        expenseListEl.innerHTML = '<p class="hint">目前還沒有記錄任何花費</p>';
-        return;
-      }
-      expenseListEl.innerHTML = expenses.slice().reverse().map((e) => `
-        <div class="expense-item">
-          <div class="expense-main">
-            <span class="expense-desc">${e.desc || '（未命名）'}</span>
-            <span class="expense-amount">${e.currency} ${e.amount}</span>
-          </div>
-          <div class="expense-meta">${e.payer} 付款・${e.participants.length}人分攤（${e.participants.join('、')}）</div>
-          <button type="button" class="expense-delete" data-id="${e.id}">刪除</button>
-        </div>
-      `).join('');
-      expenseListEl.querySelectorAll('.expense-delete').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          removeExpense(btn.dataset.id);
-          renderExpenseList();
-          renderSettlement();
-        });
-      });
-    }
-
-    function renderSettlement() {
-      const expenses = getExpenses();
-      if (!expenses.length) {
-        settlementEl.innerHTML = '<p class="hint">記錄花費後這裡會顯示結算結果</p>';
-        return;
-      }
-      const balance = computeBalances(expenses, members, rate);
-      const transactions = simplifyDebts(balance);
-      if (!transactions.length) {
-        settlementEl.innerHTML = '<p class="hint">目前帳務打平，沒有人欠誰錢</p>';
-        return;
-      }
-      settlementEl.innerHTML = transactions.map((t) => `
-        <div class="settlement-row">
-          <strong>${t.from}</strong> 付給 <strong>${t.to}</strong>
-          <span class="settlement-amount">AUD ${t.amount.toFixed(2)}（約TWD ${Math.round(t.amount * rate)}）</span>
-        </div>
-      `).join('');
-    }
-
-    document.getElementById('add-expense-btn').addEventListener('click', () => {
-      const descInput = document.getElementById('expense-desc');
-      const amountInput = document.getElementById('expense-amount');
-      const currency = document.getElementById('expense-currency').value;
-      const amount = parseFloat(amountInput.value);
-
-      if (Number.isNaN(amount) || amount <= 0) {
-        errorEl.textContent = '請輸入正確的金額';
-        return;
-      }
-      if (!selectedParticipants.size) {
-        errorEl.textContent = '至少要選一個人分攤';
-        return;
-      }
-      errorEl.textContent = '';
-
-      addExpense({ desc: descInput.value.trim(), amount, currency, payer: selectedPayer, participants: Array.from(selectedParticipants) });
-      descInput.value = '';
-      amountInput.value = '';
-      renderExpenseList();
-      renderSettlement();
     });
+  }
 
+  function renderParticipantChips() {
+    participantsSelectEl.innerHTML = members.map((m) => `<button type="button" class="member-chip ${selectedParticipants.has(m) ? 'selected' : ''}" data-name="${m}">${m}</button>`).join('');
+    participantsSelectEl.querySelectorAll('.member-chip').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const name = btn.dataset.name;
+        if (selectedParticipants.has(name)) selectedParticipants.delete(name);
+        else selectedParticipants.add(name);
+        renderParticipantChips();
+      });
+    });
+  }
+
+  function renderExpenseList() {
+    const expenses = getExpenses();
+    if (!expenses.length) {
+      expenseListEl.innerHTML = '<p class="hint">目前還沒有記錄任何花費</p>';
+      return;
+    }
+    expenseListEl.innerHTML = expenses.slice().reverse().map((e) => `
+      <div class="expense-item">
+        <div class="expense-main">
+          <span class="expense-desc">${e.desc || '（未命名）'}</span>
+          <span class="expense-amount">${e.currency} ${e.amount}</span>
+        </div>
+        <div class="expense-meta">${e.payer} 付款・${e.participants.length}人分攤（${e.participants.join('、')}）</div>
+        <button type="button" class="expense-delete" data-id="${e.id}">刪除</button>
+      </div>
+    `).join('');
+    expenseListEl.querySelectorAll('.expense-delete').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        removeExpense(btn.dataset.id);
+      });
+    });
+  }
+
+  function renderSettlement() {
+    const expenses = getExpenses();
+    if (!expenses.length) {
+      settlementEl.innerHTML = '<p class="hint">記錄花費後這裡會顯示結算結果</p>';
+      return;
+    }
+    if (currentRate === null) {
+      settlementEl.innerHTML = '<p class="hint">匯率讀取中，結算稍後會自動顯示</p>';
+      return;
+    }
+    const balance = computeBalances(expenses, members, currentRate);
+    const transactions = simplifyDebts(balance);
+    if (!transactions.length) {
+      settlementEl.innerHTML = '<p class="hint">目前帳務打平，沒有人欠誰錢</p>';
+      return;
+    }
+    settlementEl.innerHTML = transactions.map((t) => `
+      <div class="settlement-row">
+        <strong>${t.from}</strong> 付給 <strong>${t.to}</strong>
+        <span class="settlement-amount">AUD ${t.amount.toFixed(2)}（約TWD ${Math.round(t.amount * currentRate)}）</span>
+      </div>
+    `).join('');
+  }
+
+  function renderAll() {
+    syncMembersState();
     renderMembers();
     renderPayerChips();
     renderParticipantChips();
@@ -752,9 +764,31 @@ function renderSplitPage() {
     renderSettlement();
   }
 
+  // 「新增這筆花費」的監聽只綁一次；如果放在每次重新渲染都會執行到的地方，
+  // 資料每同步一次就會多疊加一個監聽器，點一次新增會觸發好幾次
+  document.getElementById('add-expense-btn').addEventListener('click', () => {
+    const descInput = document.getElementById('expense-desc');
+    const amountInput = document.getElementById('expense-amount');
+    const currency = document.getElementById('expense-currency').value;
+    const amount = parseFloat(amountInput.value);
+
+    if (Number.isNaN(amount) || amount <= 0) {
+      errorEl.textContent = '請輸入正確的金額';
+      return;
+    }
+    if (!selectedParticipants.size) {
+      errorEl.textContent = '至少要選一個人分攤';
+      return;
+    }
+    errorEl.textContent = '';
+
+    addExpense({ desc: descInput.value.trim(), amount, currency, payer: selectedPayer, participants: Array.from(selectedParticipants) });
+    descInput.value = '';
+    amountInput.value = '';
+  });
+
   // 重新整理統一交給標題列右上角的「🔄 更新」按鈕，這裡只負責顯示、
   // 並在 window.onTripDataRefreshed 被呼叫時重新讀一次（已經是快取好的新資料，不會再打一次API）
-  let currentRate = null;
   const rateInfoEl = document.getElementById('split-rate-info');
 
   function load() {
@@ -768,14 +802,12 @@ function renderSplitPage() {
       if (rateInfoEl) {
         rateInfoEl.textContent = `結算換算用匯率：1 AUD ≈ ${rate.toFixed(2)} TWD（${info.stale ? '離線快取' : formatRelativeTime(info.fetchedAt) + '更新'}，想拿最新的可以點右上角「🔄 更新」）`;
       }
-      renderExpenseSplitter(rate);
+      renderSettlement();
     });
   }
 
   // 只註冊一次監聽，避免每次重新整理匯率都疊加一個新的監聽器
-  onTripDataChange(() => {
-    if (currentRate) renderExpenseSplitter(currentRate);
-  });
+  onTripDataChange(renderAll);
 
   load();
   window.onTripDataRefreshed = load;

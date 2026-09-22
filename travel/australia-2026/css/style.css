@@ -941,6 +941,11 @@ main {
 }
 
 .expense-amount-row .converter-field { flex: 1; }
+.expense-amount-row .converter-field input {
+  font-size: 15px;
+  font-weight: 700;
+  padding: 10px 8px;
+}
 .currency-select-field { flex: 0 0 90px; }
 
 .currency-select-field select {
@@ -981,6 +986,26 @@ main {
   background: var(--text);
   color: #fff;
   border-color: var(--text);
+}
+
+/* ---- 首頁頂端旅伴名單 ---- */
+.team-members-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.team-members-bar:empty {
+  display: none;
+  margin-bottom: 0;
+}
+
+.team-members-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-right: 2px;
 }
 
 .add-expense-btn {

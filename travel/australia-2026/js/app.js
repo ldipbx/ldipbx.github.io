@@ -205,7 +205,7 @@ function renderHeader(active) {
   el.innerHTML = `
     <div class="app-header-top">
       <div>
-        <h1>澳洲旅遊手冊</h1>
+        <h1><a href="../" class="home-link" title="回旅遊列表">澳洲旅遊手冊</a></h1>
         <div class="trip-range">${TRIP.start} ~ ${TRIP.end}｜${TRIP.travelers}人</div>
       </div>
       <div class="header-actions">

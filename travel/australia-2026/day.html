@@ -24,11 +24,11 @@
   <nav class="bottom-nav" id="day-nav-bottom"></nav>
 </main>
 
-<script src="js/data.js"></script>
-<script src="js/weather.js"></script>
-<script src="js/currency.js"></script>
-<script src="js/photo.js"></script>
-<script src="js/app.js"></script>
-<script>renderDayPage();</script>
+<script defer src="js/data.js"></script>
+<script defer src="js/weather.js"></script>
+<script defer src="js/currency.js"></script>
+<script defer src="js/photo.js"></script>
+<script defer src="js/app.js"></script>
+<script>document.addEventListener('DOMContentLoaded', renderDayPage);</script>
 </body>
 </html>

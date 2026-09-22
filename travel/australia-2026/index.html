@@ -28,15 +28,10 @@
 </main>
 <footer>資料整理自行前規劃 Excel，行程如有異動請直接更新 js/data.js</footer>
 
-<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore-compat.js"></script>
-<script src="js/data.js"></script>
-<script src="js/weather.js"></script>
-<script src="js/currency.js"></script>
-<script src="js/cloudsync.js"></script>
-<script src="js/splitter.js"></script>
-<script src="js/app.js"></script>
-<script>renderIndexPage();</script>
+<script defer src="js/data.js"></script>
+<script defer src="js/weather.js"></script>
+<script defer src="js/currency.js"></script>
+<script defer src="js/app.js"></script>
+<script>document.addEventListener('DOMContentLoaded', renderIndexPage);</script>
 </body>
 </html>

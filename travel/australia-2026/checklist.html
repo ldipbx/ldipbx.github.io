@@ -25,15 +25,15 @@
 </main>
 <footer>清單連線同步後會即時分享給同一組旅遊代碼的人；沒連線的話只存在這台裝置的瀏覽器裡</footer>
 
-<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore-compat.js"></script>
-<script src="js/data.js"></script>
-<script src="js/weather.js"></script>
-<script src="js/currency.js"></script>
-<script src="js/cloudsync.js"></script>
-<script src="js/splitter.js"></script>
-<script src="js/app.js"></script>
-<script>renderChecklistPage();</script>
+<script defer src="https://www.gstatic.com/firebasejs/12.5.0/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/12.5.0/firebase-auth-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore-compat.js"></script>
+<script defer src="js/data.js"></script>
+<script defer src="js/weather.js"></script>
+<script defer src="js/currency.js"></script>
+<script defer src="js/cloudsync.js"></script>
+<script defer src="js/splitter.js"></script>
+<script defer src="js/app.js"></script>
+<script>document.addEventListener('DOMContentLoaded', renderChecklistPage);</script>
 </body>
 </html>

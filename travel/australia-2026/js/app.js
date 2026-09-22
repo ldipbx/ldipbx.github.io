@@ -303,20 +303,23 @@ function renderOpenIssuesList(container, issues) {
 }
 
 // ---- index.html ----
-// 首頁頂端顯示旅伴名單（唯讀），沿用其他頁面已經連過的旅遊代碼靜默同步，
-// 沒連過的話就顯示本機的預設/快取名單，不會另外跳出連線輸入框
+// 首頁頂端顯示旅伴名單（唯讀）。首頁不載入 Firebase（太重，會拖慢行程列表顯示），
+// 改成直接讀其他頁面（分帳/清單）同步時順手寫入的本機快取，只要在這台裝置上
+// 連過一次旅遊代碼，快取就會有最新資料；完全沒連過的話就不顯示這個區塊。
+// 快取的 key 要跟 js/cloudsync.js 的 LOCAL_FALLBACK_KEY 保持一致。
 function renderTeamMembers() {
   const el = document.getElementById('team-members');
   if (!el) return;
-  function render() {
-    const members = getMembers();
-    el.innerHTML = `
-      <span class="team-members-label">旅伴</span>
-      ${members.map((m) => `<span class="member-chip member-chip-static">${m}</span>`).join('')}
-    `;
-  }
-  onTripDataChange(render);
-  startSync();
+  let members = [];
+  try {
+    const cached = JSON.parse(localStorage.getItem('au_trip_local_data_v1'));
+    if (cached && Array.isArray(cached.members)) members = cached.members;
+  } catch (e) { /* 沒有快取或格式不對，維持空陣列不顯示 */ }
+  if (!members.length) return;
+  el.innerHTML = `
+    <span class="team-members-label">旅伴</span>
+    ${members.map((m) => `<span class="member-chip member-chip-static">${m}</span>`).join('')}
+  `;
 }
 
 function renderIndexPage() {

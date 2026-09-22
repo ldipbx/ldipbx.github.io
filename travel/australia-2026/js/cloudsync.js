@@ -127,6 +127,9 @@ function startSync(onStatus) {
     docRef.onSnapshot((snap) => {
       if (snap.exists) {
         tripCache = { ...defaultTripData(), ...snap.data() };
+        // 雲端資料也順手寫一份到本機快取，這樣其他不載入Firebase的輕量頁面
+        // （例如首頁的旅伴名單）才讀得到最新資料，不用整頁都連一次雲端
+        writeLocalFallback(tripCache);
         notifyListeners();
         if (onStatus) onStatus('✓ 已連線同步');
       } else {

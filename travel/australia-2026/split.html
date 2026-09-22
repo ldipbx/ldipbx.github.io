@@ -53,14 +53,14 @@
   <p class="hint">輸入旅遊代碼並連線後，分帳資料會即時同步給輸入同一組代碼的所有人；沒有連線的話則只存在這台裝置裡</p>
 </main>
 
-<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore-compat.js"></script>
-<script src="js/data.js"></script>
-<script src="js/currency.js"></script>
-<script src="js/cloudsync.js"></script>
-<script src="js/splitter.js"></script>
-<script src="js/app.js"></script>
-<script>renderSplitPage();</script>
+<script defer src="https://www.gstatic.com/firebasejs/12.5.0/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/12.5.0/firebase-auth-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore-compat.js"></script>
+<script defer src="js/data.js"></script>
+<script defer src="js/currency.js"></script>
+<script defer src="js/cloudsync.js"></script>
+<script defer src="js/splitter.js"></script>
+<script defer src="js/app.js"></script>
+<script>document.addEventListener('DOMContentLoaded', renderSplitPage);</script>
 </body>
 </html>

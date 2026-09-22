@@ -29,10 +29,10 @@
   <p class="hint">僅供購物時快速估算參考，實際刷卡/現場換匯匯率會略有不同</p>
 </main>
 
-<script src="js/data.js"></script>
-<script src="js/weather.js"></script>
-<script src="js/currency.js"></script>
-<script src="js/app.js"></script>
-<script>renderCurrencyPage();</script>
+<script defer src="js/data.js"></script>
+<script defer src="js/weather.js"></script>
+<script defer src="js/currency.js"></script>
+<script defer src="js/app.js"></script>
+<script>document.addEventListener('DOMContentLoaded', renderCurrencyPage);</script>
 </body>
 </html>

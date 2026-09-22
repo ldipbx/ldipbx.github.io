@@ -11,8 +11,6 @@
 <body>
 <header class="app-header" id="app-header"></header>
 <main>
-  <div id="sync-gate"></div>
-
   <h2 class="section-title" style="margin-top:0">澳幣 ⇄ 台幣 快速換算</h2>
 
   <div class="converter-card">
@@ -29,53 +27,11 @@
 
   <div class="rate-info" id="rate-info">匯率讀取中…</div>
   <p class="hint">僅供購物時快速估算參考，實際刷卡/現場換匯匯率會略有不同</p>
-
-  <h2 class="section-title">團員名單（點名字可以改）</h2>
-  <div class="member-names" id="members-list"></div>
-
-  <h2 class="section-title">新增花費</h2>
-  <div class="converter-card">
-    <label class="converter-field">
-      <span>項目說明</span>
-      <input type="text" id="expense-desc" placeholder="例如：晚餐 BangPop" />
-    </label>
-    <div class="expense-amount-row">
-      <label class="converter-field">
-        <span>金額</span>
-        <input type="number" id="expense-amount" inputmode="decimal" placeholder="0" />
-      </label>
-      <label class="converter-field currency-select-field">
-        <span>幣別</span>
-        <select id="expense-currency">
-          <option value="AUD">AUD</option>
-          <option value="TWD">TWD</option>
-        </select>
-      </label>
-    </div>
-    <div class="split-field-label">誰付的錢？</div>
-    <div class="member-chips" id="payer-select"></div>
-    <div class="split-field-label">誰要分攤？</div>
-    <div class="member-chips" id="participants-select"></div>
-    <div class="rate-stale" id="expense-error"></div>
-    <button type="button" class="add-expense-btn" id="add-expense-btn">新增這筆花費</button>
-  </div>
-
-  <h2 class="section-title">花費紀錄</h2>
-  <div id="expense-list"></div>
-
-  <h2 class="section-title">結算</h2>
-  <div id="settlement-result"></div>
-  <p class="hint">輸入旅遊代碼並連線後，分帳資料會即時同步給輸入同一組代碼的所有人；沒有連線的話則只存在這台裝置裡</p>
 </main>
 
-<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore-compat.js"></script>
 <script src="js/data.js"></script>
 <script src="js/weather.js"></script>
 <script src="js/currency.js"></script>
-<script src="js/cloudsync.js"></script>
-<script src="js/splitter.js"></script>
 <script src="js/app.js"></script>
 <script>renderCurrencyPage();</script>
 </body>

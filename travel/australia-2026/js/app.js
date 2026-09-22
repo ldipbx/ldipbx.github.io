@@ -219,6 +219,10 @@ function renderHeader(active) {
           <span class="icon-emoji">⇄</span>
           <span class="icon-label">匯率</span>
         </a>
+        <a href="split.html" class="icon-btn ${active === 'split.html' ? 'active' : ''}" title="分帳工具">
+          <span class="icon-emoji">$</span>
+          <span class="icon-label">分帳</span>
+        </a>
       </div>
     </div>
     <nav class="nav-tabs">
@@ -587,7 +591,6 @@ function renderCityPage() {
 // ---- currency.html ----
 function renderCurrencyPage() {
   renderHeader('currency.html');
-  renderSyncGate('sync-gate');
 
   const audInput = document.getElementById('aud-input');
   const twdInput = document.getElementById('twd-input');
@@ -604,7 +607,35 @@ function renderCurrencyPage() {
     };
   }
 
-  // 分帳記帳工具：團員名單、新增花費、花費紀錄、結算，都需要匯率把TWD換算成AUD
+  function load() {
+    getAudToTwdRate().then((info) => {
+      if (!info) {
+        rateInfoEl.textContent = '目前抓不到匯率資料，且沒有先前的快取，請確認網路連線';
+        return;
+      }
+      const { rate } = info;
+      const updated = new Date(info.updatedAt);
+      const updatedText = Number.isNaN(updated.getTime()) ? info.updatedAt : updated.toLocaleString('zh-TW');
+      rateInfoEl.innerHTML = `
+        1 AUD ≈ ${rate.toFixed(2)} TWD${info.stale ? '<span class="rate-stale">（離線快取，非即時）</span>' : ''}
+        <div class="rate-updated">匯率資料時間：${updatedText}（提供方每天只更新一次，不會跟著重新整理變動）</div>
+        <div class="rate-updated">上次幫你重新整理：${formatRelativeTime(info.fetchedAt)}</div>
+        <div class="rate-hint">想拿最新匯率可以點右上角的「🔄 更新」</div>
+      `;
+      bindInputs(rate);
+    });
+  }
+
+  load();
+  window.onTripDataRefreshed = load;
+}
+
+// ---- split.html（分帳記帳工具：團員名單、新增花費、花費紀錄、結算）----
+// 需要匯率把TWD換算成AUD，所以獨立頁面裡也載入了 currency.js
+function renderSplitPage() {
+  renderHeader('split.html');
+  renderSyncGate('sync-gate');
+
   function renderExpenseSplitter(rate) {
     const membersListEl = document.getElementById('members-list');
     if (!membersListEl) return; // 這頁沒有分帳工具就跳過
@@ -748,24 +779,19 @@ function renderCurrencyPage() {
   // 重新整理統一交給標題列右上角的「🔄 更新」按鈕，這裡只負責顯示、
   // 並在 window.onTripDataRefreshed 被呼叫時重新讀一次（已經是快取好的新資料，不會再打一次API）
   let currentRate = null;
+  const rateInfoEl = document.getElementById('split-rate-info');
 
   function load() {
     getAudToTwdRate().then((info) => {
       if (!info) {
-        rateInfoEl.textContent = '目前抓不到匯率資料，且沒有先前的快取，請確認網路連線';
+        if (rateInfoEl) rateInfoEl.textContent = '目前抓不到匯率資料，結算會先用上一次的匯率估算';
         return;
       }
       const { rate } = info;
       currentRate = rate;
-      const updated = new Date(info.updatedAt);
-      const updatedText = Number.isNaN(updated.getTime()) ? info.updatedAt : updated.toLocaleString('zh-TW');
-      rateInfoEl.innerHTML = `
-        1 AUD ≈ ${rate.toFixed(2)} TWD${info.stale ? '<span class="rate-stale">（離線快取，非即時）</span>' : ''}
-        <div class="rate-updated">匯率資料時間：${updatedText}（提供方每天只更新一次，不會跟著重新整理變動）</div>
-        <div class="rate-updated">上次幫你重新整理：${formatRelativeTime(info.fetchedAt)}</div>
-        <div class="rate-hint">想拿最新匯率可以點右上角的「🔄 更新」</div>
-      `;
-      bindInputs(rate);
+      if (rateInfoEl) {
+        rateInfoEl.textContent = `結算換算用匯率：1 AUD ≈ ${rate.toFixed(2)} TWD（${info.stale ? '離線快取' : formatRelativeTime(info.fetchedAt) + '更新'}，想拿最新的可以點右上角「🔄 更新」）`;
+      }
       renderExpenseSplitter(rate);
     });
   }

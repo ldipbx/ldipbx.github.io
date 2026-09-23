@@ -55,6 +55,11 @@ function qs(name) {
   return new URLSearchParams(window.location.search).get(name);
 }
 
+// 金額加千分位逗號，方便看大數字（例如分帳結算的台幣金額）
+function formatThousands(n) {
+  return n.toLocaleString('zh-TW');
+}
+
 function todayStr() {
   const d = new Date();
   const pad = (n) => String(n).padStart(2, '0');
@@ -721,7 +726,7 @@ function renderSplitPage() {
       <div class="expense-item">
         <div class="expense-main">
           <span class="expense-desc">${e.desc || '（未命名）'}</span>
-          <span class="expense-amount">${e.currency} ${e.amount}</span>
+          <span class="expense-amount">${e.currency} ${formatThousands(e.amount)}</span>
         </div>
         <div class="expense-meta">${e.payer} 付款・${e.participants.length}人分攤（${e.participants.join('、')}）</div>
         <button type="button" class="expense-delete" data-id="${e.id}">刪除</button>
@@ -753,7 +758,7 @@ function renderSplitPage() {
     settlementEl.innerHTML = transactions.map((t) => `
       <div class="settlement-row">
         <strong>${t.from}</strong> 付給 <strong>${t.to}</strong>
-        <span class="settlement-amount">AUD ${t.amount.toFixed(2)}（約TWD ${Math.round(t.amount * currentRate)}）</span>
+        <span class="settlement-amount">TWD ${formatThousands(Math.round(t.amount * currentRate))}</span>
       </div>
     `).join('');
   }

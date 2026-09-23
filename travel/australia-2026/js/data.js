@@ -200,9 +200,11 @@ const DAYS = [
     },
     segments: [
       {
-        time: '（需自行填入起降時間）', type: 'flight', title: '雪梨 → 墨爾本 VA832', status: 'confirmed',
-        howTo: '已訂 Virgin Australia VA832，起降時間確認後記得回來補上，並抓好雪梨退房與墨爾本飯店 check-in 的時間銜接',
+        time: '10:30', type: 'flight', title: '雪梨 → 墨爾本', flightNo: 'VA832',
+        duration: '約1小時35分（10:30起飛，12:05抵達）', status: 'confirmed',
+        howTo: 'Virgin Australia VA832，抓好雪梨退房與墨爾本飯店 check-in 的時間銜接',
       },
+      { time: '12:05', type: 'flight', title: '抵達墨爾本機場', flightNo: 'VA832', status: 'confirmed', mapQuery: 'Melbourne Airport, Australia' },
       { time: '抵達後', type: 'transport', title: '購買 Myki Card（墨爾本交通卡）', status: 'confirmed' },
     ],
     notes: [],

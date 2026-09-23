@@ -136,7 +136,8 @@ const DAYS = [
         warning: 'Excel 上沒有寫退房與前往機場的時間，12:20起飛前建議自己抓足夠的緩衝時間',
         mapQuery: 'Gold Coast Airport, Australia',
       },
-      { time: '12:20', type: 'flight', title: '捷星航空 飛雪梨', duration: '約1小時15分（估計，請以實際訂位為準）', status: 'confirmed' },
+      { time: '12:20', type: 'flight', title: '捷星航空 飛雪梨', duration: '約1小時30分（12:20起飛，13:50抵達）', status: 'confirmed' },
+      { time: '13:50', type: 'flight', title: '抵達雪梨機場', status: 'confirmed', mapQuery: 'Sydney Airport, Australia' },
       { time: '抵達後', type: 'transport', title: '雪梨飯店 Check in', status: 'confirmed' },
       {
         time: '14:00', type: 'activity', title: '岩石區 The Rocks', status: 'confirmed', duration: '建議1~1.5小時',

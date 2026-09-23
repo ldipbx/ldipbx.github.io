@@ -127,8 +127,7 @@ const DAYS = [
       name: 'Meriton Suites Bondi Junction', nights: 3,
       checkin: '2026-09-28', checkout: '2026-10-01',
       bookingUrl: 'https://www.agoda.com/zh-tw/meriton-suites-bondi-junction/hotel/sydney-au.html',
-      rooms: '訂房參數顯示 adults=6 / rooms=1', status: 'confirmed-needs-check',
-      note: '房型是否真的能睡下6人請務必再跟訂房網站/飯店確認，Gold Coast 跟墨爾本都是訂3房，這間目前看起來只訂1房',
+      rooms: '1房（6人），已確認房型足夠', status: 'confirmed',
       mapQuery: 'Meriton Suites Bondi Junction, Sydney, Australia',
     },
     segments: [
@@ -201,14 +200,12 @@ const DAYS = [
     },
     segments: [
       {
-        time: '（尚未安排）', type: 'transport', title: '雪梨 → 墨爾本 交通方式', status: 'tbd',
-        warning: 'Excel 上完全沒有這段交通的班機或車票資訊，是目前行程最大的缺口',
-        howTo: '建議訂購雪梨→墨爾本國內線航班（約1.5~2小時，可比較 Qantas / Jetstar / Virgin Australia），並抓好雪梨退房與墨爾本飯店 check-in 的時間銜接',
-        alternatives: [],
+        time: '（需自行填入起降時間）', type: 'flight', title: '雪梨 → 墨爾本 VA832', status: 'confirmed',
+        howTo: '已訂 Virgin Australia VA832，起降時間確認後記得回來補上，並抓好雪梨退房與墨爾本飯店 check-in 的時間銜接',
       },
       { time: '抵達後', type: 'transport', title: '購買 Myki Card（墨爾本交通卡）', status: 'confirmed' },
     ],
-    notes: ['雪梨→墨爾本交通尚未安排，請盡快訂票'],
+    notes: [],
   },
   {
     day: 9, date: '2026-10-02', weekday: '星期五',
@@ -436,8 +433,6 @@ const CITY_GUIDES = {
 
 const CHECKLIST = [
   { item: '申請 ETA 電子簽證', detail: '建議出發前及早申請完成，Excel 上寫的費用（400元）幣別待確認' },
-  { item: '確認雪梨 → 墨爾本交通', detail: 'Day8（10/1）目前完全沒有安排，建議盡快訂國內線機票' },
-  { item: '確認雪梨 Meriton Suites 房型', detail: '訂房參數顯示 adults=6/rooms=1，需跟訂房網站或飯店再次確認房間是否住得下6人' },
   { item: '決定 Day9 墨爾本行程', detail: '普芬比利小火車 / 菲利浦島企鵝歸巢，兩者皆全天行程，需擇一' },
   { item: '確認 Day5 黃金海岸退房→機場銜接時間', detail: '12:20的捷星航班，退房與到機場的時間目前沒有明確安排' },
   { item: '決定 Day11 下午行程', detail: 'Brighton Beach 或 St Kilda 擇一，21:50起飛，記得預留退房、拿行李、到機場的時間' },
@@ -459,8 +454,6 @@ const AU_FACTS = [
 ];
 
 const OPEN_ISSUES = [
-  { day: 8, issue: '雪梨→墨爾本交通尚未安排', suggestion: '建議訂國內線班機，約1.5~2小時（Qantas / Jetstar / Virgin Australia）' },
   { day: 9, issue: '普芬比利小火車 / 菲利浦島企鵝歸巢 尚未定案', suggestion: '兩者皆全天行程，需擇一；同一天的兩個晚餐選項也需要收斂成一個' },
-  { day: 5, issue: '雪梨 Meriton Suites 房型可能不足6人', suggestion: '訂房連結參數是 adults=6/rooms=1，跟其他城市訂3房不同，建議再次確認' },
   { day: 11, issue: 'Brighton Beach / St Kilda 尚未定案', suggestion: 'Brighton離市區較遠、來回耗時，St Kilda較近較好抓時間，需擇一；當天晚上還有班機，建議盡快決定' },
 ];

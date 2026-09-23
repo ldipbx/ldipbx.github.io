@@ -734,6 +734,7 @@ function renderSplitPage() {
     `).join('');
     expenseListEl.querySelectorAll('.expense-delete').forEach((btn) => {
       btn.addEventListener('click', () => {
+        if (!window.confirm('確定要刪除這筆花費紀錄嗎？')) return;
         removeExpense(btn.dataset.id);
       });
     });
@@ -757,7 +758,7 @@ function renderSplitPage() {
     }
     settlementEl.innerHTML = transactions.map((t) => `
       <div class="settlement-row">
-        <strong>${t.from}</strong> 付給 <strong>${t.to}</strong>
+        <span class="settlement-who"><strong>${t.from}</strong> 付給 <strong>${t.to}</strong></span>
         <span class="settlement-amount">TWD ${formatThousands(Math.round(t.amount * currentRate))}</span>
       </div>
     `).join('');

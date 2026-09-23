@@ -1125,6 +1125,10 @@ main {
 }
 
 .settlement-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -1133,11 +1137,15 @@ main {
   font-size: 14px;
 }
 
+.settlement-who {
+  min-width: 0;
+}
+
 .settlement-amount {
-  display: block;
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 2px;
+  flex: 0 0 auto;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
 }
 
 /* ---- checklist.html ---- */

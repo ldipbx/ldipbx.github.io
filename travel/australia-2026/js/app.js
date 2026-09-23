@@ -66,6 +66,15 @@ function todayStr() {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+// 距離某個日期還有幾天（用本地午夜對齊，避免時分秒造成差一天的誤差）
+function daysUntil(dateStr) {
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const target = new Date(y, m - 1, d);
+  return Math.round((target - startOfToday) / 86400000);
+}
+
 function findTodayDay() {
   const t = todayStr();
   return DAYS.find((d) => d.date === t) || null;
@@ -174,6 +183,13 @@ function mapLink(query) {
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
   const imagesUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(query)}`;
   return `<a class="map-link" href="${mapsUrl}" target="_blank" rel="noopener">📍 在地圖上查看</a><a class="map-link" href="${imagesUrl}" target="_blank" rel="noopener">🖼 看照片</a>`;
+}
+
+// 把一串地點串成一張 Google Maps 路線圖，方便一次看到全部景點的相對位置
+function multiMapLink(queries) {
+  if (!queries || queries.length < 2) return '';
+  const path = queries.map((q) => encodeURIComponent(q)).join('/');
+  return `<a class="map-link map-link-all" href="https://www.google.com/maps/dir/${path}" target="_blank" rel="noopener">🗺 全部景點地圖總覽</a>`;
 }
 
 function officialLink(url) {
@@ -344,7 +360,13 @@ function renderIndexPage() {
       </div>
     `;
   } else {
-    bannerEl.innerHTML = '';
+    const daysLeft = daysUntil(TRIP.start);
+    bannerEl.innerHTML = daysLeft > 0 ? `
+      <div class="today-banner">
+        <div class="label">距離出發</div>
+        <div class="headline">還有 ${daysLeft} 天</div>
+      </div>
+    ` : '';
   }
 
   const issuesEl = document.getElementById('open-issues');
@@ -572,9 +594,11 @@ function renderCityPage() {
   }
 
   if (guide.attractions && guide.attractions.length) {
+    const attractionQueries = guide.attractions.map((a) => a.mapQuery).filter(Boolean);
     parts.push(`
       <div class="guide-section">
         <h2>景點</h2>
+        ${multiMapLink(attractionQueries)}
         ${guide.attractions.map((a) => `
           <div class="attraction">
             <div class="name">${a.name}</div>

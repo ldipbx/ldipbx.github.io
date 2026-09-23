@@ -16,9 +16,33 @@
   --text-muted: #6b7280;
   --border: #e5e7eb;
 
+  /* 深色按鈕/標籤的底色跟文字，跟 --text（頁面文字色）分開管理，
+     這樣深色模式下頁面文字翻成淺色時，按鈕本身的配色不會跟著壞掉 */
+  --ink: #1f2430;
+  --ink-text: #ffffff;
+
+  /* 頂部標題列固定用深色，不管淺色/深色模式都一樣，跟頁面本身的明暗脫鉤 */
+  --header-bg: #1f2430;
+  --header-text: #ffffff;
+
   --radius: 14px;
   --radius-sm: 10px;
   --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #131417;
+    --card-bg: #1e2025;
+    --text: #eef0f3;
+    --text-muted: #9aa1ad;
+    --border: #33363d;
+
+    --ink: #3a3f4a;
+    --ink-text: #eef0f3;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -46,8 +70,8 @@ a:active, .day-card:active, .trip-card:active {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--text);
-  color: #fff;
+  background: var(--header-bg);
+  color: var(--header-text);
   padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
 }
 
@@ -111,7 +135,7 @@ a:active, .day-card:active, .trip-card:active {
 
 .icon-btn.active {
   background: #fff;
-  color: var(--text);
+  color: var(--header-bg);
 }
 
 @keyframes icon-spin {
@@ -130,7 +154,7 @@ a:active, .day-card:active, .trip-card:active {
   z-index: 20;
   width: 160px;
   background: #fff;
-  color: var(--text);
+  color: var(--header-bg);
   font-size: 12px;
   line-height: 1.4;
   padding: 10px 12px;
@@ -172,7 +196,7 @@ a:active, .day-card:active, .trip-card:active {
 
 .nav-tabs a.active {
   background: #fff;
-  color: var(--text);
+  color: var(--header-bg);
   font-weight: 700;
 }
 
@@ -491,7 +515,7 @@ main {
   bottom: 0;
   display: flex;
   gap: 8px;
-  background: #fff;
+  background: var(--card-bg);
   margin: 20px calc(-1 * 16px) calc(-1 * (16px + env(safe-area-inset-bottom)));
   padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--border);
@@ -562,6 +586,11 @@ main {
   margin-right: 14px;
 }
 
+.map-link-all {
+  display: block;
+  margin: 0 0 10px;
+}
+
 .seg-content .seg-photo {
   margin-top: 8px;
   border-radius: 8px;
@@ -606,7 +635,7 @@ main {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  border: 2px solid #fff;
+  border: 2px solid var(--card-bg);
   box-shadow: 0 0 0 1px var(--border);
   flex: 0 0 auto;
 }
@@ -639,8 +668,8 @@ main {
   display: inline-block;
   font-size: 10px;
   font-weight: 800;
-  background: var(--text);
-  color: #fff;
+  background: var(--ink);
+  color: var(--ink-text);
   padding: 2px 8px;
   border-radius: 999px;
   margin-left: 8px;
@@ -907,8 +936,8 @@ main {
 
 .sync-gate .refresh-btn {
   flex: 0 0 auto;
-  background: var(--text);
-  color: #fff;
+  background: var(--ink);
+  color: var(--ink-text);
   border: none;
   padding: 0 16px;
 }
@@ -983,9 +1012,9 @@ main {
 }
 
 .member-chip.selected {
-  background: var(--text);
-  color: #fff;
-  border-color: var(--text);
+  background: var(--ink);
+  color: var(--ink-text);
+  border-color: var(--ink);
 }
 
 /* ---- 首頁頂端旅伴名單 ---- */
@@ -1016,8 +1045,8 @@ main {
   font-size: 14px;
   font-weight: 700;
   font-family: inherit;
-  background: var(--text);
-  color: #fff;
+  background: var(--ink);
+  color: var(--ink-text);
   border: none;
   border-radius: var(--radius-sm);
 }

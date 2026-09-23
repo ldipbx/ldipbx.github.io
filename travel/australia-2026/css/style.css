@@ -533,7 +533,7 @@ main {
   font-weight: 600;
 }
 
-.bottom-nav a:active { background: #ececef; }
+.bottom-nav a:active { background: #ececef; color: #1f2430; }
 
 .bottom-nav span.disabled {
   color: #c9cdd4;
@@ -765,6 +765,9 @@ main {
   padding: 10px 12px;
   font-size: 13px;
   margin-bottom: 16px;
+  /* 底色固定是淺黃色，文字顏色也要固定成深色，不能跟著深色模式的頁面文字色一起變淺，
+     不然會變成淺色字疊在淺色底上看不到（深色模式下曾經發生過這個問題） */
+  color: #6b4e00;
 }
 
 .notes-box ul {
@@ -1208,6 +1211,8 @@ main {
   border-radius: var(--radius-sm);
   padding: 10px 12px;
   margin-bottom: 8px;
+  /* 底色固定是淺紅色，文字顏色也要固定，理由同 .notes-box */
+  color: #7a2e2a;
 }
 
 .issue-card .issue-title { font-weight: 700; font-size: 14px; color: var(--tbd); }
